@@ -6,6 +6,7 @@ interface MenuItem {
   id: number;
   title: string;
   url: string;
+  children?: MenuItem[];
 }
 
 export default function Navigation() {
@@ -23,7 +24,6 @@ export default function Navigation() {
         const data = await response.json();
         setMenuItems(data);
       } catch (error) {
-        console.error("Error fetching menu:", error);
         setError("Failed to load menu items");
       } finally {
         setLoading(false);
@@ -32,7 +32,6 @@ export default function Navigation() {
     fetchMenu();
   }, []);
 
-  //   if (loading) return <nav className="p-4">Loading menu...</nav>;
   if (error) return <nav className="p-4 text-red-500">{error}</nav>;
 
   return (
@@ -44,13 +43,27 @@ export default function Navigation() {
       </div>
       <div className="flex space-x-6">
         {menuItems.map((item) => (
-          <Link
-            key={item.id}
-            href={item.url}
-            className="text-gray-600 hover:text-gray-800 transition-colors"
-          >
-            {item.title}
-          </Link>
+          <div key={item.id} className="relative group">
+            <Link
+              href={item.url}
+              className="text-gray-600 hover:text-gray-800 transition-colors"
+            >
+              {item.title}
+            </Link>
+            {item.children && item.children.length > 0 && (
+              <div className="absolute top-full left-0 hidden group-hover:block bg-white shadow-lg py-2 min-w-[200px] z-10">
+                {item.children.map((child) => (
+                  <Link
+                    key={child.id}
+                    href={child.url}
+                    className="block px-4 py-2 text-gray-600 hover:bg-gray-100"
+                  >
+                    {child.title}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
         ))}
       </div>
     </nav>
