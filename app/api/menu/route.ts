@@ -82,7 +82,6 @@ async function fetchWordPressMenu() {
     }
   });
 
-  // Second pass: nest children under their parents
   edges.forEach(({ node }) => {
     if (node.parentId) {
       const parent = menuMap.get(node.parentId);

@@ -11,6 +11,13 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        primary: "#E8960D",
+      },
+      fontFamily: {
+        sans: ["var(--font-geist-sans)"],
+        mono: ["var(--font-geist-mono)"],
+        montserrat: ["var(--font-montserrat)"],
+        kaizer: ["var(--font-kaizer)"],
       },
     },
   },
