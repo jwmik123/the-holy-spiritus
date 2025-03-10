@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Mousewheel } from "swiper/modules";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -24,6 +24,7 @@ interface Collection {
   id: string;
   name: string;
   handle: string;
+  slug: string;
   image: string | ImageObject;
 }
 
@@ -32,6 +33,7 @@ export default function ProductCategories() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const swiperRef = useRef<SwiperRef>(null);
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchCollections() {
@@ -90,6 +92,16 @@ export default function ProductCategories() {
     }
   };
 
+  const navigateToCategory = (collection: Collection) => {
+    // Special case for "Cider & Perry" - use the specific encoded format
+    if (collection.name === "Cider & Perry") {
+      router.push("/products?category=Cider+%26amp%3B+Perry");
+    } else {
+      // For all other categories, encode normally
+      router.push(`/products?category=${encodeURIComponent(collection.name)}`);
+    }
+  };
+
   if (loading) {
     return (
       <div className="container mx-auto py-8">Categorieën aan het laden...</div>
@@ -104,7 +116,7 @@ export default function ProductCategories() {
 
   return (
     <div className="container mx-auto py-8">
-      <div className="flex justify-end mb-4 gap-2">
+      <div className="flex justify-end mb-4 gap-2 text-black">
         <button
           onClick={handlePrev}
           className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
@@ -137,7 +149,10 @@ export default function ProductCategories() {
       >
         {collections.map((collection) => (
           <SwiperSlide key={collection.id}>
-            <Link href={`/collections/${collection.handle}`}>
+            <div
+              onClick={() => navigateToCategory(collection)}
+              className="cursor-pointer"
+            >
               <div className="relative w-full aspect-[9/16] group overflow-hidden">
                 {collection.image ? (
                   <Image
@@ -158,7 +173,7 @@ export default function ProductCategories() {
                   </h3>
                 </div>
               </div>
-            </Link>
+            </div>
           </SwiperSlide>
         ))}
       </Swiper>

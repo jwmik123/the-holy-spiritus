@@ -51,7 +51,7 @@ export default function Home() {
             height={500}
             className="w-1/2 md:w-1/3 mb-10 md:mb-0"
           />
-          <div className="flex flex-col gap-4 w-full md:w-1/2 justify-center">
+          <div className="flex flex-col gap-4 w-full md:w-1/2 justify-center text-black">
             <h2 className="text-4xl font-montserrat font-bold uppercase">
               <span className="font-kaizer font-normal text-9xl">G</span>
               ebrouwen in de kerk
