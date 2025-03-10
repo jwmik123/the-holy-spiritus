@@ -4,6 +4,8 @@ import { CartProvider } from "@/context/cartContext";
 import "./globals.css";
 import Navigation from "./components/Navigations";
 import localFont from "next/font/local";
+import Footer from "./components/Footer";
+
 const montserrat = Montserrat({
   variable: "--font-montserrat",
   subsets: ["latin"],
@@ -27,10 +29,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${montserrat.variable} ${kaizer.variable} antialiased`}>
+      <body
+        className={`${montserrat.variable} ${kaizer.variable} font-montserrat antialiased`}
+      >
         <CartProvider>
           <Navigation />
           {children}
+          <Footer />
         </CartProvider>
       </body>
     </html>

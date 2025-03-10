@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface MenuItem {
   id: number;
@@ -13,6 +14,10 @@ export default function Navigation() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const pathname = usePathname();
+
+  // Check if current page is homepage
+  const isHomePage = pathname === "/";
 
   useEffect(() => {
     async function fetchMenu() {
@@ -35,7 +40,11 @@ export default function Navigation() {
   if (error) return <nav className="p-4 text-red-500">{error}</nav>;
 
   return (
-    <nav className=" p-4 bg-transparent fixed w-full z-10 text-white">
+    <nav
+      className={`p-4 fixed w-full z-10 text-white font-montserrat ${
+        isHomePage ? "bg-transparent" : "bg-primary"
+      }`}
+    >
       <div className="container mx-auto flex justify-between items-center">
         <div className="text-xl font-bold">
           <Link href="/">The Holy Spiritus</Link>

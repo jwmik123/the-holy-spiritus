@@ -11,11 +11,20 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/mousewheel";
 
+interface ImageObject {
+  id?: number;
+  src: string;
+  name?: string;
+  alt?: string;
+  date_created?: string;
+  date_modified?: string;
+}
+
 interface Collection {
   id: string;
   name: string;
   handle: string;
-  image: string;
+  image: string | ImageObject;
 }
 
 export default function ProductCategories() {
@@ -42,15 +51,22 @@ export default function ProductCategories() {
                 "Merchandise",
                 "Geen categorie",
                 "Ewan Ewyn",
+                "Sliertemie",
+                "THS Merchandise",
+                "Vaderdag",
               ].includes(collection.name)
           )
           .map((collection: Collection) => ({
             ...collection,
             name: collection.name.replace(/&amp;/g, "&"),
+            // Ensure image is a string URL, not an object
+            image:
+              typeof collection.image === "object" && collection.image !== null
+                ? (collection.image as ImageObject).src
+                : collection.image,
           }));
 
         setCollections(filteredData);
-        console.log(filteredData);
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
         console.error("Error fetching collections:", err);
@@ -75,7 +91,9 @@ export default function ProductCategories() {
   };
 
   if (loading) {
-    return <div className="container mx-auto py-8">Loading collections...</div>;
+    return (
+      <div className="container mx-auto py-8">Categorieën aan het laden...</div>
+    );
   }
 
   if (error) {
@@ -123,9 +141,10 @@ export default function ProductCategories() {
               <div className="relative w-full aspect-[9/16] group overflow-hidden">
                 {collection.image ? (
                   <Image
-                    src={collection.image}
+                    src={collection.image as string}
                     alt={collection.name}
                     fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 ) : (

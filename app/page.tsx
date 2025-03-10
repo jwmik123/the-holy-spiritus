@@ -12,7 +12,7 @@ export default function Home() {
         className="flex flex-col gap-4 h-screen justify-center"
         style={{
           backgroundImage:
-            "linear-gradient(to bottom, transparent, black), url(/images/theholyspiritus2.jpg)",
+            "linear-gradient(to bottom, transparent, #12161A), url(/images/theholyspiritus2.jpg)",
           backgroundSize: "cover",
           // backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
@@ -36,7 +36,7 @@ export default function Home() {
         </div>
         <StoreOpen />
       </section>
-      <section className="container mx-auto h-[50vh] flex items-center">
+      <section className="container mx-auto h-[80vh] flex items-center">
         <FadeInText />
       </section>
       <section className="container mx-auto flex items-center">
@@ -60,10 +60,10 @@ export default function Home() {
               Proeverij in Zeeland
             </h3>
             <p>
-              Vanuit de voormalige Johannes de DoperKerk in Sint Jansteen
-              Hulst Vlaanderen; op de grensstreek Nederland-België brouwen en
-              stoken wij onze geliefde dranken. Maar voor wij hier het eerste
-              vat plaatste is er heel wat gebeurd.
+              Vanuit de voormalige Johannes de DoperKerk in Sint Jansteen Hulst
+              Vlaanderen; op de grensstreek Nederland-België brouwen en stoken
+              wij onze geliefde dranken. Maar voor wij hier het eerste vat
+              plaatste is er heel wat gebeurd.
             </p>
             <p>
               Van de meest uiteenlopende regionale grondstoffen brouwen en
@@ -88,8 +88,8 @@ export default function Home() {
           </div>
         </div>
       </section>
-      <section>
-        <div className="container mx-auto pt-24">
+      <section className="py-24">
+        <div className="container mx-auto">
           <h2 className="text-4xl font-montserrat font-bold uppercase">
             <span className="font-kaizer font-normal text-9xl">P</span>
             roducten

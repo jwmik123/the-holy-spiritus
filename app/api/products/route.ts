@@ -4,7 +4,9 @@ import { getWooCommerceClient } from "@/utils/woocommerce.server";
 export async function GET() {
   try {
     const wooCommerce = getWooCommerceClient();
-    const response = await wooCommerce.get("products");
+    const response = await wooCommerce.get("products", {
+      per_page: 20,
+    });
     return NextResponse.json(response.data);
   } catch (error) {
     console.error("Error fetching products:", error);

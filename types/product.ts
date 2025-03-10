@@ -25,6 +25,12 @@ export interface Product {
   }>;
 }
 
+export interface Collection {
+  id: number;
+  name: string;
+  slug: string;
+}
+
 export interface CartItem {
   productId: number;
   quantity: number;

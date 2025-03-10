@@ -5,17 +5,25 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 export default function FadeInText() {
   const textRef = useRef<HTMLParagraphElement>(null);
+  const firstLetterRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    // Register ScrollTrigger plugin
     gsap.registerPlugin(ScrollTrigger);
 
     const textElement = textRef.current;
     if (textElement) {
-      // Split text into words
+      // Split text into words, but exclude the firstLetter span
       const splitText = (element: HTMLElement) => {
-        const text = element.textContent || "";
-        element.innerHTML = "";
+        // Get all child nodes except the first span (which is our special "O")
+        const childNodes = Array.from(element.childNodes).slice(1);
+
+        // Get the text content from remaining nodes
+        const text = childNodes.map((node) => node.textContent || "").join("");
+
+        // Remove all nodes except the first span
+        while (element.childNodes.length > 1) {
+          element.removeChild(element.lastChild!);
+        }
 
         const words: HTMLSpanElement[] = [];
 
@@ -63,14 +71,21 @@ export default function FadeInText() {
         className="text-white text-3xl md:text-4xl font-montserrat relative z-10"
         ref={textRef}
       >
-        Onze dranken zijn stuk voor stuk unieke creaties. Bedacht in de diepste
+        <span
+          className="font-kaizer font-normal text-9xl leading-3"
+          ref={firstLetterRef}
+        >
+          O
+        </span>
+        nze dranken zijn stuk voor stuk unieke creaties. Bedacht in de diepste
         en verlaten krochten van The Holy Spiritus brouwerij. En als je geboren
         wordt in een oude kerk kan het eigenlijk niet anders dan dat je puur en
         bijzonder bent.
       </p>
       <p className="text-white w-full text-3xl md:text-4xl font-montserrat absolute top-0 left-0 opacity-40 z-0">
-        Onze dranken zijn stuk voor stuk unieke creaties. Bedacht in de diepste
-        en verlaten krochten van The Holy Spiritus brouwerij. En als je geboren
+        <span className="font-kaizer font-normal text-9xl leading-3">O</span>nze
+        dranken zijn stuk voor stuk unieke creaties. Bedacht in de diepste en
+        verlaten krochten van The Holy Spiritus brouwerij. En als je geboren
         wordt in een oude kerk kan het eigenlijk niet anders dan dat je puur en
         bijzonder bent.
       </p>

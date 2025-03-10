@@ -12,6 +12,7 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
         primary: "#E8960D",
+        dark: "#12161A",
       },
       fontFamily: {
         sans: ["var(--font-geist-sans)"],
