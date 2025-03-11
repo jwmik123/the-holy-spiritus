@@ -90,11 +90,11 @@ export default function Home() {
       </section>
       <section className="py-24">
         <div className="container mx-auto">
-          <h2 className="text-4xl font-montserrat font-bold uppercase">
+          <h2 className="text-4xl text-white font-montserrat font-bold uppercase">
             <span className="font-kaizer font-normal text-9xl">P</span>
             roducten
           </h2>
-          <p className="text-2xl font-montserrat font-light w-2/3 mt-4">
+          <p className="text-2xl text-white font-montserrat font-light w-2/3 mt-4">
             Stromen bij jou de cider, honingwijn, distillaten en likeuren ook
             door je aderen? In dat geval adem je eigenlijk al The Holy Spiritus
             zonder dat je je er wellicht van bewust bent.

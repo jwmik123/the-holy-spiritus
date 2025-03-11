@@ -23,6 +23,12 @@ interface ProductAttribute {
   options: string[];
 }
 
+interface ProductMetaData {
+  id: number;
+  key: string;
+  value: string;
+}
+
 interface RelatedProduct {
   id: number;
   name: string;
@@ -43,6 +49,7 @@ interface ProductData {
   images: ProductImage[];
   categories: ProductCategory[];
   attributes: ProductAttribute[];
+  meta_data: ProductMetaData[];
   related_ids: number[];
   slug: string;
   sku: string;
@@ -57,6 +64,9 @@ export default function ProductDetailPage() {
   const [selectedImage, setSelectedImage] = useState<string>("");
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useCart();
+  const [activeTab, setActiveTab] = useState<"informatie" | "specificaties">(
+    "informatie"
+  );
 
   // Helper function to clean HTML entities
   const cleanHtmlEntities = (text: string | undefined): string => {
@@ -75,11 +85,138 @@ export default function ProductDetailPage() {
     return html.replace(/<\/?[^>]+(>|$)/g, "");
   };
 
+  // Function to safely get meta value
+  const getMetaValue = (
+    product: ProductData,
+    keyPart: string
+  ): string | null => {
+    if (!product.meta_data || !Array.isArray(product.meta_data)) return null;
+
+    const meta = product.meta_data.find(
+      (m) => m.key && m.key.toLowerCase().includes(keyPart.toLowerCase())
+    );
+
+    return meta?.value || null;
+  };
+
+  // Get alcohol percentage
+  const getAlcoholPercentage = (product: ProductData): string | null => {
+    // Try attributes first
+    if (product.attributes && Array.isArray(product.attributes)) {
+      const alcoholAttr = product.attributes.find(
+        (attr) =>
+          attr.name.toLowerCase().includes("alcohol") ||
+          attr.name.toLowerCase().includes("percentage")
+      );
+
+      if (alcoholAttr && alcoholAttr.options?.length > 0) {
+        return alcoholAttr.options[0];
+      }
+    }
+
+    // Then try meta data
+    return (
+      getMetaValue(product, "alcohol") ||
+      getMetaValue(product, "percentage") ||
+      null
+    );
+  };
+
+  // Get volume
+  const getVolume = (product: ProductData): string | null => {
+    // Try attributes first
+    if (product.attributes && Array.isArray(product.attributes)) {
+      const volumeAttr = product.attributes.find(
+        (attr) =>
+          attr.name.toLowerCase().includes("volume") ||
+          attr.name.toLowerCase().includes("inhoud")
+      );
+
+      if (volumeAttr && volumeAttr.options?.length > 0) {
+        return volumeAttr.options[0];
+      }
+    }
+
+    // Then try meta data
+    return (
+      getMetaValue(product, "volume") || getMetaValue(product, "inhoud") || null
+    );
+  };
+
+  // Get storage instructions
+  const getStorage = (product: ProductData): string | null => {
+    return (
+      getMetaValue(product, "bewaren") ||
+      getMetaValue(product, "storage") ||
+      "Koel & donker bewaren, wij raden het aan om hem op kamertemperatuur te nuttigen en naar eigen smaak een ijsblokje in te laten verdampen"
+    );
+  };
+
+  // Get serving advice
+  const getServingAdvice = (product: ProductData): string | null => {
+    return (
+      getMetaValue(product, "serveer") ||
+      getMetaValue(product, "serving") ||
+      null
+    );
+  };
+
+  // Get product specifications
+  const getProductSpecifications = (product: ProductData): string[] => {
+    const specs: string[] = [];
+
+    // Try to extract from meta data
+    if (product.meta_data && Array.isArray(product.meta_data)) {
+      product.meta_data.forEach((meta) => {
+        if (meta.key && meta.key.toLowerCase().includes("spec") && meta.value) {
+          specs.push(meta.value);
+        }
+      });
+    }
+
+    // If no specifications found but we have attributes, convert them to specs
+    if (
+      specs.length === 0 &&
+      product.attributes &&
+      product.attributes.length > 0
+    ) {
+      product.attributes.forEach((attr) => {
+        if (attr.name && attr.options && attr.options.length > 0) {
+          specs.push(`${attr.name}: ${attr.options.join(", ")}`);
+        }
+      });
+    }
+
+    // If still no specs, provide some default ones based on the product type
+    if (
+      specs.length === 0 &&
+      product.categories &&
+      product.categories.length > 0
+    ) {
+      const category = product.categories[0].name.toLowerCase();
+
+      if (category.includes("cider") || category.includes("perry")) {
+        specs.push("Soort: Appel/Peren Cider");
+        specs.push("Herkomst: Nederland");
+        specs.push("Geproduceerd in: Sint Jansteen, Zeeland");
+      } else if (category.includes("wijn") || category.includes("wine")) {
+        specs.push("Soort: Honingwijn");
+        specs.push("Herkomst: Nederland");
+        specs.push("Geproduceerd in: Sint Jansteen, Zeeland");
+      } else if (category.includes("distill") || category.includes("spirit")) {
+        specs.push("Soort: Ambachtelijk Distillaat");
+        specs.push("Herkomst: Nederland");
+        specs.push("Geproduceerd in: Sint Jansteen, Zeeland");
+      }
+    }
+
+    return specs;
+  };
+
   useEffect(() => {
     async function fetchProduct() {
       setLoading(true);
       try {
-        // In a real application, you'd fetch from your API
         const response = await fetch(`/api/products/${slug}`);
 
         if (!response.ok) {
@@ -162,42 +299,6 @@ export default function ProductDetailPage() {
     }
   };
 
-  const getSpecificationsFromDescription = (description: string) => {
-    // Extract product specifications from the description HTML
-    // You may need to adjust this based on your product data structure
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(description, "text/html");
-
-    const specs: Record<string, string[]> = {
-      Productspecificaties: [],
-      "Overige kenmerken": [],
-      "Etiket informatie": [],
-      Bewaren: [],
-    };
-
-    // Example: try to extract data from specific sections
-    doc.querySelectorAll("h3").forEach((heading) => {
-      const section = heading.textContent?.trim();
-      if (section && specs.hasOwnProperty(section)) {
-        const items: string[] = [];
-        let nextEl = heading.nextElementSibling;
-
-        while (nextEl && nextEl.tagName !== "H3") {
-          if (nextEl.tagName === "P" || nextEl.tagName === "UL") {
-            items.push(nextEl.textContent?.trim() || "");
-          }
-          nextEl = nextEl.nextElementSibling;
-        }
-
-        if (items.length > 0) {
-          specs[section] = items;
-        }
-      }
-    });
-
-    return specs;
-  };
-
   // Loading skeleton
   if (loading) {
     return (
@@ -253,10 +354,12 @@ export default function ProductDetailPage() {
     );
   }
 
-  // Extract specifications from the description
-  const productSpecifications = getSpecificationsFromDescription(
-    product.description
-  );
+  // Get product data
+  const alcoholPercentage = getAlcoholPercentage(product);
+  const volume = getVolume(product);
+  const servingAdvice = getServingAdvice(product);
+  const storage = getStorage(product);
+  const specifications = getProductSpecifications(product);
 
   // Main render with product data
   return (
@@ -283,7 +386,9 @@ export default function ProductDetailPage() {
             {product.categories && product.categories[0] && (
               <li className="flex items-center">
                 <Link
-                  href={`/collections/${product.categories[0].slug}`}
+                  href={`/products?category=${encodeURIComponent(
+                    product.categories[0].name
+                  )}`}
                   className="text-gray-500 hover:text-primary"
                 >
                   {product.categories[0].name}
@@ -349,22 +454,31 @@ export default function ProductDetailPage() {
             )}
 
             {/* Product code/sku */}
-            <div className="text-sm text-gray-500">
-              Artikelnummer: {product.sku}
-            </div>
+            {product.sku && (
+              <div className="text-sm text-gray-500">
+                Artikelnummer: {product.sku}
+              </div>
+            )}
 
             {/* Price */}
             <div className="text-3xl font-bold text-primary">
               €{parseFloat(product.price).toFixed(2)}
+              {product.on_sale && product.regular_price && (
+                <span className="text-gray-400 line-through text-xl ml-2">
+                  €{parseFloat(product.regular_price).toFixed(2)}
+                </span>
+              )}
             </div>
 
             {/* Short description */}
-            <div
-              className="prose prose-sm max-w-none"
-              dangerouslySetInnerHTML={{
-                __html: product.short_description,
-              }}
-            />
+            {product.short_description && (
+              <div
+                className="prose prose-sm max-w-none"
+                dangerouslySetInnerHTML={{
+                  __html: product.short_description,
+                }}
+              />
+            )}
 
             {/* Add to cart section */}
             <div className="flex items-center space-x-4 pt-4">
@@ -385,26 +499,31 @@ export default function ProductDetailPage() {
               </button>
             </div>
 
-            {/* Alcoholpercentage & Volume */}
-            <div className="bg-gray-50 p-4 rounded-lg mt-4">
-              <div className="flex items-center justify-between text-sm">
-                <span className="font-medium">Alcoholpercentage:</span>
-                <span>43%</span>
+            {/* Alcoholpercentage & Volume - only if available */}
+            {(alcoholPercentage || volume) && (
+              <div className="bg-gray-50 p-4 rounded-lg mt-4">
+                {alcoholPercentage && (
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-medium">Alcoholpercentage:</span>
+                    <span>{alcoholPercentage}</span>
+                  </div>
+                )}
+                {volume && (
+                  <div className="flex items-center justify-between text-sm mt-2">
+                    <span className="font-medium">Volume:</span>
+                    <span>{volume}</span>
+                  </div>
+                )}
               </div>
-              <div className="flex items-center justify-between text-sm mt-2">
-                <span className="font-medium">Volume:</span>
-                <span>0,50 liter</span>
-              </div>
-            </div>
+            )}
 
-            {/* Additional info */}
-            <div className="border-t pt-4 mt-4">
-              <h3 className="font-bold mb-2">Serveeradvies:</h3>
-              <p className="text-gray-700">
-                Serveren op kamertemperatuur voor optimale smaak. Een ijsblokje
-                laat de drank extra ademen.
-              </p>
-            </div>
+            {/* Serving advice - only if available */}
+            {servingAdvice && (
+              <div className="border-t pt-4 mt-4">
+                <h3 className="font-bold mb-2">Serveeradvies:</h3>
+                <p className="text-gray-700">{servingAdvice}</p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -412,130 +531,85 @@ export default function ProductDetailPage() {
         <div className="mt-16">
           <div className="border-b border-gray-200">
             <nav className="-mb-px flex space-x-8">
-              <a
-                href="#informatie"
-                className="border-primary text-primary font-medium text-sm py-4 px-1 border-b-2"
+              <button
+                onClick={() => setActiveTab("informatie")}
+                className={`${
+                  activeTab === "informatie"
+                    ? "border-primary text-primary"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                } font-medium text-sm py-4 px-1 border-b-2`}
               >
                 Productinformatie
-              </a>
-              <a
-                href="#specificaties"
-                className="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm py-4 px-1 border-b-2"
+              </button>
+              <button
+                onClick={() => setActiveTab("specificaties")}
+                className={`${
+                  activeTab === "specificaties"
+                    ? "border-primary text-primary"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                } font-medium text-sm py-4 px-1 border-b-2`}
               >
                 Specificaties
-              </a>
+              </button>
             </nav>
           </div>
 
           {/* Tab content - Productinformatie */}
-          <div id="informatie" className="py-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div>
-                <h3 className="text-xl font-bold mb-4">Productspecificaties</h3>
-                <ul className="space-y-2">
-                  <li>
-                    <span className="font-medium">Soort distillaat:</span>{" "}
-                    appeldistillaat
-                  </li>
-                  <li>
-                    <span className="font-medium">Distillaat land:</span>{" "}
-                    Nederland
-                  </li>
-                  <li>
-                    <span className="font-medium">Kleur distillaat:</span>{" "}
-                    amberkleurig
-                  </li>
-                  <li>
-                    <span className="font-medium">Serveertemperatuur:</span>{" "}
-                    kamertemperatuur
-                  </li>
-                  <li>
-                    <span className="font-medium">Soort flessluiting:</span>{" "}
-                    kurken stop
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h3 className="text-xl font-bold mb-4">Overige kenmerken</h3>
-                <ul className="space-y-2">
-                  <li>
-                    <span className="font-medium">Verkrijgbaar in:</span>{" "}
-                    Nederland en België
-                  </li>
-                  <li>
-                    <span className="font-medium">Drank opties:</span>{" "}
-                    Veganistisch
-                  </li>
-                  <li>
-                    <span className="font-medium">Smaakprofiel:</span> vol,
-                    verrassend en vanille (van het eiken vat), rokerig
-                  </li>
-                  <li>
-                    <span className="font-medium">Lekker bij:</span>{" "}
-                    kaasschotels, dessert, aperitief, cocktails en als digestief
-                  </li>
-                  <li>
-                    <span className="font-medium">Verpakkingsvorm:</span> Doos
-                  </li>
-                </ul>
+          {activeTab === "informatie" && (
+            <div id="informatie" className="py-6">
+              {/* Description content */}
+              <div className="mt-4">
+                <h3 className="text-xl font-bold mb-4">Productbeschrijving</h3>
+                <div
+                  className="prose max-w-none"
+                  dangerouslySetInnerHTML={{ __html: product.description }}
+                />
               </div>
             </div>
+          )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-              <div>
-                <h3 className="text-xl font-bold mb-4">Etiket informatie</h3>
-                <ul className="space-y-2">
-                  <li>
-                    <span className="font-medium">Ingrediënten:</span> appels
-                  </li>
-                  <li>
-                    <span className="font-medium">Allergenen informatie:</span>
-                  </li>
-                  <li className="ml-4">Geschikt voor veganisten</li>
-                  <li className="ml-4">Op basis van appel</li>
-                  <li className="ml-4">
-                    Kan sporen bevatten van appel, peren, noten, honing
-                  </li>
-                  <li>
-                    <span className="font-medium">Alcoholpercentage:</span> 43%
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h3 className="text-xl font-bold mb-4">Bewaren</h3>
-                <p className="text-gray-700">
-                  Koel & donker bewaren, wij raden het aan om hem op
-                  kamertemperatuur te nuttigen en naar eigen smaak een ijsblokje
-                  in te laten verdampen.
-                </p>
-              </div>
-            </div>
+          {/* Tab content - Specificaties */}
+          {activeTab === "specificaties" && (
+            <div id="specificaties" className="py-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Product Specifications */}
+                <div>
+                  <h3 className="text-xl font-bold mb-4">
+                    Productspecificaties
+                  </h3>
+                  <ul className="space-y-2">
+                    {specifications.map((spec, index) => (
+                      <li key={index}>{spec}</li>
+                    ))}
+                  </ul>
+                </div>
 
-            <div className="mt-8">
-              <h3 className="text-xl font-bold mb-4">Productbeschrijving</h3>
-              <div className="prose max-w-none">
-                <p>Informatie:</p>
-                <p>
-                  Met ambacht en liefde is dit mooie distillaat tot stand
-                  gekomen
-                </p>
-                <p>
-                  Blozende appels zijn met zorg uitgekozen en met passie
-                  gedistilleerd tot een hartverwarmende drank
-                </p>
-                <p>
-                  Deze Grande Cuvée Calva is gecreëerd in de voormalige kerk te
-                  Sint Jansteen, thans The Holy Spiritus, als herinnering aan de
-                  rijke traditie van distilleren.
-                </p>
-                <p>
-                  De volle smaak en kleur zijn bekomen na 18 maanden rijping in
-                  een Frans eiken vat
-                </p>
-                <p>Heavy Toasted</p>
+                {/* Storage Information */}
+                <div>
+                  <h3 className="text-xl font-bold mb-4">Bewaren</h3>
+                  <p className="text-gray-700">{storage}</p>
+                </div>
               </div>
+
+              {/* Product Attributes */}
+              {product.attributes && product.attributes.length > 0 && (
+                <div className="mt-8">
+                  <h3 className="text-xl font-bold mb-4">Productattributen</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {product.attributes.map((attr) => (
+                      <div
+                        key={attr.id}
+                        className="flex justify-between border-b pb-2"
+                      >
+                        <span className="font-medium">{attr.name}:</span>
+                        <span>{attr.options.join(", ")}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
+          )}
         </div>
 
         {/* Related products */}

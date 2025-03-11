@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Product, Collection } from "@/types/product";
 import { useCart } from "@/context/cartContext";
-import { ToastContainer } from "react-toastify";
+import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -185,12 +185,6 @@ export default function ProductsPage() {
     addToCart(productId);
   };
 
-  // Create array of collection titles with "ALL" as first option
-  const collectionTitles = [
-    "ALL",
-    ...collections.map((collection) => collection.name),
-  ];
-
   // Render product skeleton
   const ProductSkeleton = () => (
     <div className="flex flex-col animate-pulse">
@@ -342,21 +336,24 @@ export default function ProductsPage() {
                       {product.categories?.[0]?.name || "Alle Producten"}
                     </div>
 
-                    {/* Product Name */}
-                    <h2 className="text-2xl font-bold mb-4 leading-tight h-16 overflow-hidden">
-                      {product.name}
-                    </h2>
+                    {/* Make the product name and image clickable */}
+                    <Link href={`/product/${product.slug}`} className="group">
+                      {/* Product Name */}
+                      <h2 className="text-2xl font-bold mb-4 leading-tight h-16 overflow-hidden group-hover:text-primary transition-colors">
+                        {product.name}
+                      </h2>
 
-                    {/* Product Image with Background */}
-                    <div className="bg-gray-100 p-4 mb-4 flex items-center justify-center h-64">
-                      {product.images?.[0] && (
-                        <img
-                          src={product.images[0].src}
-                          alt={product.images[0].alt || product.name}
-                          className="h-full object-contain"
-                        />
-                      )}
-                    </div>
+                      {/* Product Image with Background */}
+                      <div className="bg-gray-100 p-4 mb-4 flex items-center justify-center h-64 group-hover:bg-gray-200 transition-colors">
+                        {product.images?.[0] && (
+                          <img
+                            src={product.images[0].src}
+                            alt={product.images[0].alt || product.name}
+                            className="h-full object-contain"
+                          />
+                        )}
+                      </div>
+                    </Link>
 
                     {/* Price */}
                     <div className="text-3xl font-bold mb-4">
@@ -364,20 +361,28 @@ export default function ProductsPage() {
                     </div>
 
                     {/* Add to Basket Button */}
-                    <button
-                      onClick={() => handleAddToCart(product.id)}
-                      className="flex items-center justify-center bg-primary text-white px-4 py-2 font-medium"
-                    >
-                      Voeg toe aan winkelmand
-                      {(() => {
-                        const cartItem = items.find(
-                          (item) => item?.productId === product.id
-                        );
-                        return cartItem && cartItem.quantity > 0
-                          ? ` (${cartItem.quantity})`
-                          : "";
-                      })()}
-                    </button>
+                    <div className="flex gap-2">
+                      <Link
+                        href={`/product/${product.slug}`}
+                        className="flex-1 flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-black px-4 py-2 font-medium transition-colors"
+                      >
+                        Bekijk product
+                      </Link>
+                      <button
+                        onClick={() => handleAddToCart(product.id)}
+                        className="flex-1 flex items-center justify-center bg-primary text-white px-4 py-2 font-medium"
+                      >
+                        Toevoegen
+                        {(() => {
+                          const cartItem = items.find(
+                            (item) => item?.productId === product.id
+                          );
+                          return cartItem && cartItem.quantity > 0
+                            ? ` (${cartItem.quantity})`
+                            : "";
+                        })()}
+                      </button>
+                    </div>
                   </>
                 ) : (
                   // Empty cell to maintain grid layout

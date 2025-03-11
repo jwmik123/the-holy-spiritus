@@ -46,7 +46,7 @@ export default function Navigation() {
       }`}
     >
       <div className="container mx-auto flex justify-between items-center">
-        <div className="text-xl font-bold">
+        <div className="text-xl font-bold uppercase">
           <Link href="/">The Holy Spiritus</Link>
         </div>
         <div className="flex space-x-6">
