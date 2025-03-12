@@ -44,3 +44,42 @@ body {
 .animate-pulse {
   animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+
+/* Add these to your globals.css */
+
+/* Logo pulsing animation */
+@keyframes logo-pulse {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0.7;
+  }
+}
+
+.page-transition-logo {
+  animation: logo-pulse 1.5s infinite ease-in-out;
+}
+
+/* Remove any default transitions that might interfere */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* Disable any built-in transitions that might cause issues */
+html {
+  view-transition-name: none;
+}
+
+/* Ensure content doesn't shift during transitions */
+html.transitioning {
+  overflow: hidden;
+}

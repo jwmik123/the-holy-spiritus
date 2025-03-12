@@ -5,6 +5,8 @@ import FadeInText from "./components/FadeInText";
 import Categories from "./components/Categories";
 import Image from "next/image";
 import ProductCategories from "./components/ProductCategories";
+import CustomLink from "./components/CustomLink";
+
 export default function Home() {
   return (
     <main className="bg-primary">
@@ -26,12 +28,12 @@ export default function Home() {
           </h1>
 
           <div className="flex gap-4">
-            <Link href="/products" className="button-secondary">
+            <CustomLink href="/products" className="button-secondary">
               Webshop
-            </Link>
-            <Link href="/contact" className="button-primary">
+            </CustomLink>
+            <CustomLink href="/contact" className="button-primary">
               Boek een proeverij of workshop
-            </Link>
+            </CustomLink>
           </div>
         </div>
         <StoreOpen />
