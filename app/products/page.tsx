@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import CustomLink from "../components/CustomLink";
 
 export default function ProductsPage() {
   const [activeCategory, setActiveCategory] = useState<string>("ALL");
@@ -177,7 +178,7 @@ export default function ProductsPage() {
     <div className="flex flex-col animate-pulse">
       <div className="h-4 w-16 bg-gray-200 mb-2 rounded"></div>
       <div className="h-8 w-4/5 bg-gray-200 mb-4 rounded"></div>
-      <div className="bg-gray-200 p-4 mb-4 h-64 rounded"></div>
+      <div className="bg-gray-200 p-4 mb-4 h-96 rounded"></div>
       <div className="h-4 w-32 bg-gray-200 mb-2 rounded"></div>
       <div className="h-8 w-24 bg-gray-200 mb-4 rounded"></div>
       <div className="h-10 w-full bg-gray-200 rounded"></div>
@@ -193,21 +194,7 @@ export default function ProductsPage() {
       </div>
     );
 
-  // Ensure the grid always has 3 items in each row
-  const normalizeProductsForGrid = (products: Product[]): Product[] => {
-    const result = [...products];
-    // Add empty placeholder objects if needed to maintain 3-column grid
-    const remainder = products.length % 3;
-    if (remainder > 0) {
-      for (let i = 0; i < 3 - remainder; i++) {
-        // Add a placeholder with a unique negative ID
-        result.push({ id: -1 - i } as Product);
-      }
-    }
-    return result;
-  };
-
-  const normalizedProducts = normalizeProductsForGrid(products);
+  // No need for grid normalization
 
   return (
     <div className="px-4 py-8 bg-white min-h-screen text-black">
@@ -307,81 +294,69 @@ export default function ProductsPage() {
         )}
 
         {/* Products Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {isLoading ? (
             // Show skeletons when loading
             <>
-              {[...Array(6)].map((_, i) => (
+              {[...Array(8)].map((_, i) => (
                 <ProductSkeleton key={i} />
               ))}
             </>
           ) : (
             // Show actual products
-            normalizedProducts.map((product, index) => (
+            products.map((product: Product, index: number) => (
               <div
                 key={product.id || `empty-${index}`}
                 className="flex flex-col"
               >
-                {/* Show actual product or empty space for grid alignment */}
-                {product.id > 0 ? (
-                  <>
-                    {/* Product Category */}
-                    <div className="text-xs text-gray-500 mb-2">
-                      {product.categories?.[0]?.name || "Alle Producten"}
+                <>
+                  {/* Brand/Store name */}
+                  <div className="text-sm text-gray-700 mb-1">
+                    {product.categories?.[0]?.name || "Vince"}
+                  </div>
+
+                  {/* Make the product name and image clickable */}
+                  <CustomLink
+                    href={`/product/${product.slug}`}
+                    className="group"
+                  >
+                    {/* Product Image with Background - Taller height */}
+                    <div className=" mb-4  flex items-center justify-center h-96  transition-colors">
+                      {product.images?.[0] && (
+                        <img
+                          src={product.images[0].src}
+                          alt={product.images[0].alt || product.name}
+                          className="h-full w-full object-cover"
+                        />
+                      )}
                     </div>
+                    {/* Product Name */}
+                    <h2 className="text-lg font-normal overflow-hidden ">
+                      {product.name}
+                    </h2>
+                  </CustomLink>
 
-                    {/* Make the product name and image clickable */}
-                    <Link href={`/product/${product.slug}`} className="group">
-                      {/* Product Name */}
-                      <h2 className="text-2xl font-bold mb-4 leading-tight h-16 overflow-hidden group-hover:text-primary transition-colors">
-                        {product.name}
-                      </h2>
+                  {/* Price - lighter weight and smaller size */}
+                  <div className="text-gray-700 mb-6">
+                    €{Number(product.price).toFixed(2)}
+                  </div>
 
-                      {/* Product Image with Background */}
-                      <div className="bg-gray-100 p-4 mb-4 flex items-center justify-center h-64 group-hover:bg-gray-200 transition-colors">
-                        {product.images?.[0] && (
-                          <img
-                            src={product.images[0].src}
-                            alt={product.images[0].alt || product.name}
-                            className="h-full object-contain"
-                          />
-                        )}
-                      </div>
-                    </Link>
-
-                    {/* Price */}
-                    <div className="text-3xl font-bold mb-4">
-                      €{Number(product.price).toFixed(2)}
-                    </div>
-
-                    {/* Add to Basket Button */}
-                    <div className="flex gap-2">
-                      <Link
-                        href={`/product/${product.slug}`}
-                        className="flex-1 flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-black px-4 py-2 font-medium transition-colors"
-                      >
-                        Bekijk product
-                      </Link>
-                      <button
-                        onClick={() => handleAddToCart(product.id)}
-                        className="flex-1 flex items-center justify-center bg-primary text-white px-4 py-2 font-medium"
-                      >
-                        Toevoegen
-                        {(() => {
-                          const cartItem = items.find(
-                            (item) => item?.productId === product.id
-                          );
-                          return cartItem && cartItem.quantity > 0
-                            ? ` (${cartItem.quantity})`
-                            : "";
-                        })()}
-                      </button>
-                    </div>
-                  </>
-                ) : (
-                  // Empty cell to maintain grid layout
-                  <div className="hidden md:block"></div>
-                )}
+                  {/* Add to Basket Button - removing the split button design */}
+                  <button
+                    onClick={() => handleAddToCart(product.id)}
+                    className="bg-primary px-4 py-2 w-full text-center text-sm font-normal text-white"
+                  >
+                    Voeg toe
+                    {(() => {
+                      const cartItem = items.find(
+                        (item) => item?.productId === product.id
+                      );
+                      return cartItem && cartItem.quantity > 0
+                        ? ` (${cartItem.quantity})`
+                        : "";
+                    })()}
+                  </button>
+                </>
               </div>
             ))
           )}
