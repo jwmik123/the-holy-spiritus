@@ -2,8 +2,9 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useCart } from "@/context/cartContext";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
 
 interface ProductImage {
   id: number;
@@ -39,12 +40,10 @@ interface ProductData {
 
 export default function ProductDetailPage() {
   const { slug } = useParams();
-  const [product, setProduct] = useState<ProductData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<string>("");
   const [quantity, setQuantity] = useState(1);
-  const { addToCart } = useCart();
+  const { addToCart, items } = useCart();
+  const router = useRouter();
 
   // Simplified helper function to clean HTML entities
   const cleanHtmlEntities = (text: string | undefined): string => {
@@ -115,40 +114,80 @@ export default function ProductDetailPage() {
     return info;
   };
 
-  useEffect(() => {
-    async function fetchProduct() {
-      setLoading(true);
-      try {
-        const response = await fetch(`/api/products/${slug}`);
+  // Fetch product data with React Query
+  const {
+    data: product,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["product", slug],
+    queryFn: async () => {
+      const response = await fetch(`/api/products/${slug}`);
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch product");
-        }
-
-        const data = await response.json();
-        const cleanedProduct = {
-          ...data,
-          name: cleanHtmlEntities(data.name),
-          categories: data.categories?.map((category: ProductCategory) => ({
-            ...category,
-            name: cleanHtmlEntities(category.name),
-          })),
-        };
-
-        setProduct(cleanedProduct);
-        setSelectedImage(cleanedProduct.images[0]?.src || "");
-      } catch (error) {
-        console.error("Error fetching product:", error);
-        setError("Er is een fout opgetreden bij het laden van het product.");
-      } finally {
-        setLoading(false);
+      if (!response.ok) {
+        throw new Error("Failed to fetch product");
       }
-    }
 
-    if (slug) {
-      fetchProduct();
+      const data = await response.json();
+      const cleanedProduct = {
+        ...data,
+        name: cleanHtmlEntities(data.name),
+        categories: data.categories?.map((category: ProductCategory) => ({
+          ...category,
+          name: cleanHtmlEntities(category.name),
+        })),
+      };
+
+      return cleanedProduct as ProductData;
+    },
+    staleTime: 1000 * 60 * 5, // Consider product data fresh for 5 minutes
+  });
+
+  // Fetch related products based on the same category
+  const { data: relatedProducts = [], isLoading: relatedLoading } = useQuery({
+    queryKey: ["relatedProducts", product?.categories?.[0]?.id],
+    queryFn: async () => {
+      // Only proceed if we have a category
+      if (!product?.categories?.[0]?.id) {
+        return [];
+      }
+
+      const categoryId = product.categories[0].id;
+
+      // Fetch products from the same category, excluding the current product
+      const response = await fetch(
+        `/api/products?category=${categoryId}&per_page=4`
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch related products");
+      }
+
+      const data = await response.json();
+
+      // Filter out the current product and take up to 3 related products
+      const filtered = data.products
+        .filter(
+          (relatedProduct: ProductData) => relatedProduct.id !== product.id
+        )
+        .slice(0, 3)
+        .map((relatedProduct: ProductData) => ({
+          ...relatedProduct,
+          name: cleanHtmlEntities(relatedProduct.name),
+        }));
+
+      return filtered;
+    },
+    enabled: !!product?.categories?.[0]?.id, // Only run when we have the product category
+    staleTime: 1000 * 60 * 5, // Consider related products fresh for 5 minutes
+  });
+
+  // Set the selected image once product data is loaded
+  useEffect(() => {
+    if (product?.images?.[0]?.src) {
+      setSelectedImage(product.images[0].src);
     }
-  }, [slug]);
+  }, [product]);
 
   const handleAddToCart = () => {
     if (product) {
@@ -163,11 +202,79 @@ export default function ProductDetailPage() {
     }
   };
 
-  // Loading state
-  if (loading) {
+  // Loading state with skeleton
+  if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8 pt-32">
-        <div className="text-center">Loading product...</div>
+      <div className="bg-white min-h-screen pt-24">
+        <div className="container mx-auto px-4 py-8">
+          {/* Breadcrumb skeleton */}
+          <div className="mb-6 flex space-x-2">
+            <div className="h-4 w-16 bg-gray-200 rounded animate-pulse"></div>
+            <div className="h-4 w-4 bg-gray-100 rounded"></div>
+            <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
+            <div className="h-4 w-4 bg-gray-100 rounded"></div>
+            <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
+          </div>
+
+          {/* Product main section skeleton */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            {/* Product image skeleton */}
+            <div className="space-y-4">
+              <div className="bg-gray-200 rounded-lg h-[500px] animate-pulse"></div>
+              <div className="flex space-x-2">
+                {[1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    className="h-24 w-24 bg-gray-200 rounded animate-pulse"
+                  ></div>
+                ))}
+              </div>
+            </div>
+
+            {/* Product info skeleton */}
+            <div className="flex flex-col space-y-6">
+              <div className="h-10 w-3/4 bg-gray-200 rounded animate-pulse"></div>
+              <div className="h-4 w-1/3 bg-gray-200 rounded animate-pulse"></div>
+              <div className="h-4 w-1/4 bg-gray-200 rounded animate-pulse"></div>
+              <div className="h-8 w-1/3 bg-gray-200 rounded animate-pulse"></div>
+              <div className="space-y-2">
+                <div className="h-4 w-full bg-gray-200 rounded animate-pulse"></div>
+                <div className="h-4 w-full bg-gray-200 rounded animate-pulse"></div>
+                <div className="h-4 w-3/4 bg-gray-200 rounded animate-pulse"></div>
+              </div>
+              <div className="flex items-center space-x-4 pt-4">
+                <div className="h-10 w-24 bg-gray-200 rounded animate-pulse"></div>
+                <div className="h-10 flex-1 bg-gray-200 rounded animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Product details skeleton */}
+          <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+              <div className="h-8 w-48 bg-gray-200 rounded animate-pulse mb-4"></div>
+              <div className="space-y-2">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div
+                    key={i}
+                    className="h-4 w-full bg-gray-200 rounded animate-pulse"
+                  ></div>
+                ))}
+              </div>
+            </div>
+            <div>
+              <div className="h-8 w-48 bg-gray-200 rounded animate-pulse mb-4"></div>
+              <div className="space-y-4">
+                {[1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    className="h-6 w-full bg-gray-200 rounded animate-pulse"
+                  ></div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -176,7 +283,11 @@ export default function ProductDetailPage() {
   if (error) {
     return (
       <div className="container mx-auto px-4 py-8 pt-32">
-        <div className="text-red-500 text-center">{error}</div>
+        <div className="text-red-500 text-center">
+          {error instanceof Error
+            ? error.message
+            : "Er is een fout opgetreden bij het laden van het product."}
+        </div>
       </div>
     );
   }
@@ -317,6 +428,14 @@ export default function ProductDetailPage() {
                 className="bg-primary text-white font-medium py-2 px-6 rounded hover:bg-opacity-90 transition duration-200"
               >
                 Toevoegen aan winkelwagen
+                {(() => {
+                  const cartItem = items.find(
+                    (item) => item?.productId === product.id
+                  );
+                  return cartItem && cartItem.quantity > 0
+                    ? ` (${cartItem.quantity})`
+                    : "";
+                })()}
               </button>
             </div>
           </div>
@@ -379,6 +498,97 @@ export default function ProductDetailPage() {
                 )}
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Related Products Section */}
+        <div className="mt-24">
+          <h2 className="text-3xl font-bold mb-8">Gerelateerde Producten</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {relatedLoading ? (
+              // Skeleton loading for related products
+              Array(3)
+                .fill(0)
+                .map((_, index) => (
+                  <div key={index} className="flex flex-col">
+                    <div className="h-4 w-16 bg-gray-200 mb-2 rounded animate-pulse"></div>
+                    <div className="h-8 w-4/5 bg-gray-200 mb-4 rounded animate-pulse"></div>
+                    <div className="bg-gray-200 p-4 mb-4 h-56 rounded animate-pulse"></div>
+                    <div className="h-6 w-24 bg-gray-200 mb-4 rounded animate-pulse"></div>
+                    <div className="flex gap-2">
+                      <div className="h-10 flex-1 bg-gray-200 rounded animate-pulse"></div>
+                      <div className="h-10 flex-1 bg-gray-200 rounded animate-pulse"></div>
+                    </div>
+                  </div>
+                ))
+            ) : relatedProducts.length > 0 ? (
+              relatedProducts.map((relatedProduct: ProductData) => (
+                <div key={relatedProduct.id} className="flex flex-col">
+                  {/* Product Category */}
+                  <div className="text-xs text-gray-500 mb-2">
+                    {relatedProduct.categories?.[0]?.name || ""}
+                  </div>
+
+                  {/* Make the product name and image clickable */}
+                  <Link
+                    href={`/product/${relatedProduct.slug}`}
+                    className="group"
+                  >
+                    {/* Product Name */}
+                    <h3 className="text-xl font-bold mb-4 leading-tight h-16 overflow-hidden group-hover:text-primary transition-colors">
+                      {relatedProduct.name}
+                    </h3>
+
+                    {/* Product Image with Background */}
+                    <div className="bg-gray-100 p-4 mb-4 flex items-center justify-center h-56 group-hover:bg-gray-200 transition-colors">
+                      {relatedProduct.images?.[0] && (
+                        <img
+                          src={relatedProduct.images[0].src}
+                          alt={
+                            relatedProduct.images[0].alt || relatedProduct.name
+                          }
+                          className="h-full object-contain"
+                        />
+                      )}
+                    </div>
+                  </Link>
+
+                  {/* Price */}
+                  <div className="text-2xl font-bold mb-4">
+                    €{Number(relatedProduct.price).toFixed(2)}
+                  </div>
+
+                  {/* Add to Cart Button */}
+                  <div className="flex gap-2">
+                    <Link
+                      href={`/product/${relatedProduct.slug}`}
+                      className="flex-1 flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-black px-4 py-2 font-medium transition-colors"
+                    >
+                      Bekijk product
+                    </Link>
+                    <button
+                      onClick={() => addToCart(relatedProduct.id, 1)}
+                      className="flex-1 flex items-center justify-center bg-primary text-white px-4 py-2 font-medium"
+                    >
+                      Toevoegen
+                      {(() => {
+                        const cartItem = items.find(
+                          (item) => item?.productId === relatedProduct.id
+                        );
+                        return cartItem && cartItem.quantity > 0
+                          ? ` (${cartItem.quantity})`
+                          : "";
+                      })()}
+                    </button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              // No related products found
+              <div className="col-span-3 text-center py-8 text-gray-500">
+                Geen gerelateerde producten gevonden
+              </div>
+            )}
           </div>
         </div>
       </div>

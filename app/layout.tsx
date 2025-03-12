@@ -37,7 +37,9 @@ export default function RootLayout({
         <ReactQueryProvider>
           <CartProvider>
             <Navigation />
-            {children}
+            <div className="min-h-screen flex justify-center items-center">
+              <div className="w-full">{children}</div>
+            </div>
             <Footer />
           </CartProvider>
         </ReactQueryProvider>
