@@ -5,26 +5,19 @@ import { useCart } from "@/context/cartContext";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
 export default function ProductsPage() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [collections, setCollections] = useState<Collection[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<string>("ALL");
-  const { items, addToCart } = useCart();
-
-  // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalProducts, setTotalProducts] = useState(0);
+  const { items, addToCart } = useCart();
   const productsPerPage = 12;
 
   const router = useRouter();
   const searchParams = useSearchParams();
   const categoriesContainerRef = useRef<HTMLDivElement>(null);
 
-  // Helper function to clean HTML entities with proper typing
+  // Helper function to clean HTML entities
   const cleanHtmlEntities = (text: string | undefined): string => {
     if (!text) return "";
     return text
@@ -35,7 +28,7 @@ export default function ProductsPage() {
       .replace(/&#39;/g, "'");
   };
 
-  // Get page from URL or default to 1
+  // Get page and category from URL params on initial load
   useEffect(() => {
     const pageParam = searchParams.get("page");
     const categoryParam = searchParams.get("category");
@@ -49,87 +42,81 @@ export default function ProductsPage() {
     }
   }, [searchParams]);
 
-  // Fetch products with pagination
-  useEffect(() => {
-    async function fetchProducts() {
-      setLoading(true);
-      try {
-        let url = `/api/products?page=${currentPage}&per_page=${productsPerPage}`;
-
-        // Add category parameter if not "ALL"
-        if (activeCategory !== "ALL") {
-          const categoryId = collections.find(
-            (c) => c.name === activeCategory
-          )?.id;
-          if (categoryId) {
-            url += `&category=${categoryId}`;
-          }
-        }
-
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error("Failed to fetch products");
-        }
-
-        const data = await response.json();
-
-        console.log(data);
-        // Clean HTML entities in product data
-        const cleanedProducts = data.products.map((product: Product) => ({
-          ...product,
-          name: cleanHtmlEntities(product.name),
-          categories: product.categories?.map((category) => ({
-            ...category,
-            name: cleanHtmlEntities(category.name),
-          })),
-        }));
-
-        setProducts(cleanedProducts);
-        setTotalPages(data.pagination.totalPages);
-        setTotalProducts(data.pagination.total);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-        setError(
-          "Er is een fout opgetreden bij het laden van de producten. Probeer het later opnieuw."
-        );
-      } finally {
-        setLoading(false);
+  // Fetch collections with React Query
+  const {
+    data: collections = [],
+    isLoading: collectionsLoading,
+    error: collectionsError,
+  } = useQuery({
+    queryKey: ["collections"],
+    queryFn: async () => {
+      const response = await fetch("/api/products/collections");
+      if (!response.ok) {
+        throw new Error("Failed to fetch collections");
       }
-    }
+      const data = await response.json();
 
-    // Only fetch if we have collection data (for category filtering)
-    if (collections.length > 0 || !activeCategory || activeCategory === "ALL") {
-      fetchProducts();
-    }
-  }, [currentPage, activeCategory, collections]);
+      // Clean HTML entities in collection names
+      return data.map((collection: Collection) => ({
+        ...collection,
+        name: cleanHtmlEntities(collection.name),
+      }));
+    },
+    staleTime: 1000 * 60 * 5, // Consider collections data fresh for 5 minutes
+  });
 
-  // Fetch collections
-  useEffect(() => {
-    async function fetchCollections() {
-      try {
-        const response = await fetch("/api/products/collections");
-        if (!response.ok) {
-          throw new Error("Failed to fetch collections");
+  // Fetch products with React Query
+  const {
+    data: productsData,
+    isLoading: productsLoading,
+    error: productsError,
+  } = useQuery({
+    queryKey: ["products", currentPage, activeCategory],
+    queryFn: async () => {
+      let url = `/api/products?page=${currentPage}&per_page=${productsPerPage}`;
+
+      // Add category parameter if not "ALL"
+      if (activeCategory !== "ALL") {
+        const categoryId = collections.find(
+          (c: Collection) => c.name === activeCategory
+        )?.id;
+        if (categoryId) {
+          url += `&category=${categoryId}`;
         }
-        const data = await response.json();
-
-        // Clean HTML entities in collection names
-        const cleanedData = data.map((collection: Collection) => ({
-          ...collection,
-          name: cleanHtmlEntities(collection.name),
-        }));
-
-        setCollections(cleanedData);
-      } catch (error) {
-        console.error("Error fetching collections:", error);
-        setError(
-          "Er is een fout opgetreden bij het laden van de categorieën. Probeer het later opnieuw."
-        );
       }
-    }
 
-    fetchCollections();
-  }, []);
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error("Failed to fetch products");
+      }
+
+      const data = await response.json();
+
+      // Clean HTML entities in product data
+      const cleanedProducts = data.products.map((product: Product) => ({
+        ...product,
+        name: cleanHtmlEntities(product.name),
+        categories: product.categories?.map((category) => ({
+          ...category,
+          name: cleanHtmlEntities(category.name),
+        })),
+      }));
+
+      return {
+        products: cleanedProducts,
+        totalPages: data.pagination.totalPages,
+        totalProducts: data.pagination.total,
+      };
+    },
+    enabled: !collectionsLoading, // Only run this query when collections are loaded
+    staleTime: 1000 * 60 * 2, // Consider products fresh for 2 minutes
+  });
+
+  const products = productsData?.products || [];
+  const totalPages = productsData?.totalPages || 1;
+  const totalProducts = productsData?.totalProducts || 0;
+  const isLoading = collectionsLoading || productsLoading;
+  const error = collectionsError || productsError;
 
   // Handle page change
   const goToPage = (pageNumber: number) => {
@@ -197,7 +184,14 @@ export default function ProductsPage() {
     </div>
   );
 
-  if (error) return <div className="p-4 text-red-500">{error}</div>;
+  if (error)
+    return (
+      <div className="p-4 text-red-500">
+        {error instanceof Error
+          ? error.message
+          : "Er is een fout opgetreden bij het laden van de producten."}
+      </div>
+    );
 
   // Ensure the grid always has 3 items in each row
   const normalizeProductsForGrid = (products: Product[]): Product[] => {
@@ -223,7 +217,7 @@ export default function ProductsPage() {
           <h3 className="text-2xl font-bold">Categorieën</h3>
 
           {/* Pagination at top */}
-          {totalPages > 1 && !loading && (
+          {totalPages > 1 && !isLoading && (
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => goToPage(currentPage - 1)}
@@ -276,7 +270,7 @@ export default function ProductsPage() {
               Alle Producten
             </button>
 
-            {collections.map((collection) => (
+            {collections.map((collection: Collection) => (
               <button
                 key={collection.id}
                 onClick={() => handleCategoryChange(collection.name)}
@@ -301,7 +295,7 @@ export default function ProductsPage() {
         </div>
 
         {/* Products count */}
-        {!loading && (
+        {!isLoading && (
           <p className="text-sm text-gray-500 mb-6">
             {products.length > 0
               ? `Tonen ${(currentPage - 1) * productsPerPage + 1}-${Math.min(
@@ -314,7 +308,7 @@ export default function ProductsPage() {
 
         {/* Products Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {loading ? (
+          {isLoading ? (
             // Show skeletons when loading
             <>
               {[...Array(6)].map((_, i) => (
@@ -394,7 +388,7 @@ export default function ProductsPage() {
         </div>
 
         {/* Show "No products found" message when needed */}
-        {products.length === 0 && !loading && (
+        {products.length === 0 && !isLoading && (
           <div className="text-center py-10">
             <p className="text-lg">
               Geen producten gevonden in deze categorie.
@@ -403,7 +397,7 @@ export default function ProductsPage() {
         )}
 
         {/* Pagination Controls at bottom */}
-        {totalPages > 1 && !loading && (
+        {totalPages > 1 && !isLoading && (
           <div className="flex justify-center mt-8 space-x-2">
             <button
               onClick={() => goToPage(currentPage - 1)}

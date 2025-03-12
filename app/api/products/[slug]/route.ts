@@ -15,7 +15,7 @@ export async function GET(
 
   try {
     const wooCommerce = getWooCommerceClient();
-    const slug = params.slug;
+    const slug = await params.slug;
 
     // First, we need to find the product by slug
     const productsResponse = await wooCommerce.get("products", {

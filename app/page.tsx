@@ -7,7 +7,7 @@ import Image from "next/image";
 import ProductCategories from "./components/ProductCategories";
 export default function Home() {
   return (
-    <main>
+    <main className="bg-primary">
       <section
         className="flex flex-col gap-4 h-screen justify-center"
         style={{

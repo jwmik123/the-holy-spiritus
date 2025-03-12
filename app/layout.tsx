@@ -1,3 +1,4 @@
+// app/layout.tsx
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import { CartProvider } from "@/context/cartContext";
@@ -5,6 +6,7 @@ import "./globals.css";
 import Navigation from "./components/Navigations";
 import localFont from "next/font/local";
 import Footer from "./components/Footer";
+import ReactQueryProvider from "./providers/ReactQueryProvider";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -32,11 +34,13 @@ export default function RootLayout({
       <body
         className={`${montserrat.variable} ${kaizer.variable} font-montserrat antialiased`}
       >
-        <CartProvider>
-          <Navigation />
-          {children}
-          <Footer />
-        </CartProvider>
+        <ReactQueryProvider>
+          <CartProvider>
+            <Navigation />
+            {children}
+            <Footer />
+          </CartProvider>
+        </ReactQueryProvider>
       </body>
     </html>
   );
