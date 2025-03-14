@@ -49,7 +49,7 @@ export default function Navigation() {
 
   return (
     <nav
-      className={`p-4 fixed w-full z-10 text-white font-montserrat ${
+      className={`p-8 fixed w-full z-50 text-white font-montserrat ${
         isHomePage ? "bg-transparent" : "bg-primary"
       }`}
     >
@@ -61,7 +61,7 @@ export default function Navigation() {
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center space-x-6">
           {menuItems.map((item) => (
-            <div key={item.id} className="relative group">
+            <div key={item.id} className="relative group text-lg">
               <CustomLink href={item.url} className="lowercase">
                 {item.title}
               </CustomLink>
