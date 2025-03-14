@@ -326,12 +326,12 @@ export default function ProductsPage() {
                         <img
                           src={product.images[0].src}
                           alt={product.images[0].alt || product.name}
-                          className="h-full w-full object-cover"
+                          className="h-full w-full object-cover rounded-md"
                         />
                       )}
                     </div>
                     {/* Product Name */}
-                    <h2 className="text-lg font-normal overflow-hidden ">
+                    <h2 className="text-lg font-bold overflow-hidden ">
                       {product.name}
                     </h2>
                   </CustomLink>
@@ -342,7 +342,7 @@ export default function ProductsPage() {
                   </div>
 
                   {/* Add to Basket Button - removing the split button design */}
-                  <button
+                  {/* <button
                     onClick={() => handleAddToCart(product.id)}
                     className="bg-primary px-4 py-2 w-full text-center text-sm font-normal text-white"
                   >
@@ -355,7 +355,7 @@ export default function ProductsPage() {
                         ? ` (${cartItem.quantity})`
                         : "";
                     })()}
-                  </button>
+                  </button> */}
                 </>
               </div>
             ))

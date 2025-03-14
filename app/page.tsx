@@ -21,10 +21,19 @@ export default function Home() {
         }}
       >
         <div className="container mx-auto flex flex-col gap-14">
-          <h1 className="font-montserrat text-white font-bold flex flex-col text-[7vw] leading-[8vw] uppercase">
-            <span>Verlichtend</span>
-            <span>Duurzaam</span>
-            <span>Gek</span>
+          <h1 className="font-montserrat text-white  text-[7vw] leading-[8vw] font-bold ">
+            <span className="font-kaizer font-normal text-[12vw] uppercase">
+              V
+            </span>
+            erlichtend <br />
+            <span className="font-kaizer font-normal text-[12vw] uppercase">
+              D
+            </span>
+            uurzaam <br />
+            <span className="font-kaizer font-normal text-[12vw] uppercase">
+              G
+            </span>
+            ek
           </h1>
 
           <div className="flex gap-4">

@@ -6,6 +6,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Mousewheel } from "swiper/modules";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { SwiperRef } from "swiper/react";
+import CustomLink from "./CustomLink"; // Import CustomLink
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -92,13 +93,14 @@ export default function ProductCategories() {
     }
   };
 
-  const navigateToCategory = (collection: Collection) => {
+  // Create URL for category navigation
+  const getCategoryUrl = (collection: Collection) => {
     // Special case for "Cider & Perry" - use the specific encoded format
     if (collection.name === "Cider & Perry") {
-      router.push("/products?category=Cider+%26amp%3B+Perry");
+      return "/products?category=Cider+%26amp%3B+Perry";
     } else {
       // For all other categories, encode normally
-      router.push(`/products?category=${encodeURIComponent(collection.name)}`);
+      return `/products?category=${encodeURIComponent(collection.name)}`;
     }
   };
 
@@ -149,8 +151,8 @@ export default function ProductCategories() {
       >
         {collections.map((collection) => (
           <SwiperSlide key={collection.id}>
-            <div
-              onClick={() => navigateToCategory(collection)}
+            <CustomLink
+              href={getCategoryUrl(collection)}
               className="cursor-pointer"
             >
               <div className="relative w-full aspect-[9/16] group overflow-hidden">
@@ -173,7 +175,7 @@ export default function ProductCategories() {
                   </h3>
                 </div>
               </div>
-            </div>
+            </CustomLink>
           </SwiperSlide>
         ))}
       </Swiper>
