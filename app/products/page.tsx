@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { Product, Collection } from "@/types/product";
 import { useCart } from "@/context/cartContext";
 import Link from "next/link";
@@ -8,7 +8,45 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import CustomLink from "../components/CustomLink";
 
-export default function ProductsPage() {
+// Loading fallback component
+function ProductsLoading() {
+  return (
+    <div className="px-4 py-8 bg-white min-h-screen text-black">
+      <div className="container mx-auto pt-24">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-2xl font-bold">Categorieën</h3>
+        </div>
+
+        <div className="relative mb-8">
+          <div className="flex overflow-x-auto py-2 px-10 gap-3">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div
+                key={i}
+                className="h-10 w-32 bg-gray-200 rounded-full animate-pulse"
+              ></div>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {[...Array(8)].map((_, i) => (
+            <div key={i} className="flex flex-col animate-pulse">
+              <div className="h-4 w-16 bg-gray-200 mb-2 rounded"></div>
+              <div className="h-8 w-4/5 bg-gray-200 mb-4 rounded"></div>
+              <div className="bg-gray-200 p-4 mb-4 h-96 rounded"></div>
+              <div className="h-4 w-32 bg-gray-200 mb-2 rounded"></div>
+              <div className="h-8 w-24 bg-gray-200 mb-4 rounded"></div>
+              <div className="h-10 w-full bg-gray-200 rounded"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Main products content component
+function ProductsContent() {
   const [activeCategory, setActiveCategory] = useState<string>("ALL");
   const [currentPage, setCurrentPage] = useState(1);
   const { items, addToCart } = useCart();
@@ -193,8 +231,6 @@ export default function ProductsPage() {
           : "Er is een fout opgetreden bij het laden van de producten."}
       </div>
     );
-
-  // No need for grid normalization
 
   return (
     <div className="px-4 py-8 bg-white min-h-screen text-black">
@@ -462,5 +498,14 @@ export default function ProductsPage() {
         )}
       </div>
     </div>
+  );
+}
+
+// Main Products Page component with Suspense
+export default function ProductsPage() {
+  return (
+    <Suspense fallback={<ProductsLoading />}>
+      <ProductsContent />
+    </Suspense>
   );
 }

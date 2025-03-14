@@ -38,7 +38,8 @@ async function fetchAPI<T>(
   return json.data;
 }
 
-export async function sendMail(
+// Helper function (not exported at the module level)
+async function sendMail(
   subject: string,
   body: string,
   mutationId: string = "contact"

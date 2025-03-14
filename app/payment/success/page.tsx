@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useCart } from "@/context/cartContext";
 
@@ -8,7 +8,8 @@ interface OrderStatus {
   id: number;
 }
 
-export default function PaymentSuccessPage() {
+// Component to handle data fetching with searchParams
+function PaymentSuccessContent() {
   const searchParams = useSearchParams();
   const { clearCart } = useCart();
   const [orderStatus, setOrderStatus] = useState<OrderStatus | null>(null);
@@ -118,5 +119,26 @@ export default function PaymentSuccessPage() {
         </a>
       </div>
     </div>
+  );
+}
+
+// Loading fallback
+function LoadingFallback() {
+  return (
+    <div className="max-w-2xl mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">Loading Order Status</h1>
+      <div className="animate-pulse bg-gray-200 h-6 w-3/4 mb-4 rounded"></div>
+      <div className="animate-pulse bg-gray-200 h-4 w-1/2 mb-2 rounded"></div>
+      <div className="animate-pulse bg-gray-200 h-4 w-2/3 rounded"></div>
+    </div>
+  );
+}
+
+// Main component with Suspense wrapper
+export default function PaymentSuccessPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <PaymentSuccessContent />
+    </Suspense>
   );
 }

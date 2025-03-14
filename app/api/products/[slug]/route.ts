@@ -1,11 +1,8 @@
 // app/api/products/[slug]/route.ts
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getWooCommerceClient } from "@/utils/woocommerce.server";
 
-export async function GET(
-  request: Request,
-  { params }: { params: { slug: string } }
-) {
+export async function GET(request: NextRequest, { params }: any) {
   if (!params?.slug) {
     return NextResponse.json(
       { message: "Product slug is required" },
@@ -15,7 +12,7 @@ export async function GET(
 
   try {
     const wooCommerce = getWooCommerceClient();
-    const slug = await params.slug;
+    const slug = params.slug;
 
     // First, we need to find the product by slug
     const productsResponse = await wooCommerce.get("products", {
