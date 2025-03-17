@@ -11,7 +11,7 @@ export default function Home() {
   return (
     <main className="bg-primary">
       <section
-        className="flex flex-col gap-4 h-screen justify-center"
+        className="flex flex-col gap-4 h-[90vh] md:h-screen  justify-center"
         style={{
           backgroundImage:
             "linear-gradient(to bottom, transparent, #12161A), url(/images/theholyspiritus2.jpg)",

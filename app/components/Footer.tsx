@@ -10,10 +10,10 @@ const Footer: FC = () => {
         alt="The Holy Splithoa Logo"
         width={100}
         height={100}
-        className="w-1/3 absolute left-1/2 -translate-x-1/2 top-5 pointer-events-none opacity-50"
+        className="w-1/2 md:w-1/3 absolute left-1/2 -translate-x-1/2 top-5 pointer-events-none opacity-50"
       />
       <div className="container mx-auto px-4 pb-10 flex flex-col md:flex-row justify-between items-start">
-        <div className="mb-6 md:mb-0 w-1/3">
+        <div className="mb-6 md:mb-0 w-full md:w-1/3">
           <h3 className="text-2xl font-bold uppercase">The Holy Spiritus</h3>
           <p className="text-white/50 text-white mt-4">
             Onze dranken zijn stuk voor stuk unieke creaties. Bedacht in de

@@ -49,7 +49,7 @@ export default function Navigation() {
 
   return (
     <nav
-      className={`py-8 fixed w-full z-50 text-white font-montserrat ${
+      className={`p-4 md:p-8 pr-14 md:pr-0 fixed w-full z-50 text-white font-montserrat ${
         isHomePage ? "bg-transparent" : "bg-primary"
       }`}
     >
