@@ -2,7 +2,6 @@
 import { useState, useEffect, useRef, Suspense } from "react";
 import { Product, Collection } from "@/types/product";
 import { useCart } from "@/context/cartContext";
-import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";

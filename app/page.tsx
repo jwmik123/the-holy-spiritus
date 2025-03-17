@@ -37,10 +37,16 @@ export default function Home() {
           </h1>
 
           <div className="flex gap-4">
-            <CustomLink href="/products" className="button-secondary">
+            <CustomLink
+              href="/shop"
+              className="button-secondary hover:bg-white hover:text-black transition-all duration-300"
+            >
               Webshop
             </CustomLink>
-            <CustomLink href="/contact" className="button-primary">
+            <CustomLink
+              href="/contact"
+              className="button-primary hover:bg-primary/50  transition-all duration-300"
+            >
               Boek een proeverij of workshop
             </CustomLink>
           </div>
