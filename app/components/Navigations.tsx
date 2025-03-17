@@ -49,12 +49,12 @@ export default function Navigation() {
 
   return (
     <nav
-      className={`p-8 fixed w-full z-50 text-white font-montserrat ${
+      className={`py-8 fixed w-full z-50 text-white font-montserrat ${
         isHomePage ? "bg-transparent" : "bg-primary"
       }`}
     >
       <div className="container mx-auto flex justify-between items-center">
-        <div className="text-xl font-bold uppercase">
+        <div className="text-lg md:text-2xl font-bold uppercase">
           <CustomLink href="/">The Holy Spiritus</CustomLink>
         </div>
 

@@ -117,7 +117,7 @@ export default function ProductCategories() {
   }
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="container mx-auto px-10 md:px-auto py-8">
       <div className="flex justify-end mb-4 gap-2 text-black">
         <button
           onClick={handlePrev}

@@ -666,9 +666,6 @@ export default function CheckoutPage() {
                     >
                       <option value="NL">Nederland</option>
                       <option value="BE">België</option>
-                      <option value="DE">Duitsland</option>
-                      <option value="FR">Frankrijk</option>
-                      <option value="LU">Luxemburg</option>
                     </select>
                   </div>
 

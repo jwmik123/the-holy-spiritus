@@ -20,32 +20,32 @@ export default function Home() {
           backgroundRepeat: "no-repeat",
         }}
       >
-        <div className="container mx-auto flex flex-col gap-14">
-          <h1 className="font-montserrat text-white  text-[7vw] leading-[8vw] font-bold ">
-            <span className="font-kaizer font-normal text-[12vw] uppercase">
+        <div className="container mx-10 md:mx-auto flex flex-col gap-14">
+          <h1 className="font-montserrat text-white  text-[12vw] md:text-[7vw] leading-[10vw] md:leading-[8vw] font-bold ">
+            <span className="font-kaizer font-normal text-[14vw] md:text-[12vw] uppercase">
               V
             </span>
-            erlichtend <br />
-            <span className="font-kaizer font-normal text-[12vw] uppercase">
+            verlichtend <br />
+            <span className="font-kaizer font-normal text-[14vw] md:text-[12vw] uppercase">
               D
             </span>
             uurzaam <br />
-            <span className="font-kaizer font-normal text-[12vw] uppercase">
+            <span className="font-kaizer font-normal text-[14vw] md:text-[12vw] uppercase">
               G
             </span>
             ek
           </h1>
 
-          <div className="flex gap-4">
+          <div className="flex flex-col md:flex-row gap-4">
             <CustomLink
               href="/shop"
-              className="button-secondary hover:bg-white hover:text-black transition-all duration-300"
+              className="button-secondary w-2/3 text-center md:text-left md:w-auto hover:bg-white hover:text-black transition-all duration-300"
             >
               Webshop
             </CustomLink>
             <CustomLink
               href="/contact"
-              className="button-primary hover:bg-primary/50  transition-all duration-300"
+              className="button-primary w-2/3 text-center md:text-left md:w-auto hover:bg-primary/50  transition-all duration-300"
             >
               Boek een proeverij of workshop
             </CustomLink>
@@ -53,20 +53,20 @@ export default function Home() {
         </div>
         <StoreOpen />
       </section>
-      <section className="container mx-auto h-[80vh] flex items-center">
+      <section className="container mx-auto min-h-[80vh] flex items-center">
         <FadeInText />
       </section>
       <section className="container mx-auto flex items-center">
         <Categories />
       </section>
-      <section className="h-screen bg-white mt-24 flex items-center justify-center">
+      <section className="min-h-screen bg-white mt-24 py-12 flex items-center justify-center">
         <div className="container mx-10 md:mx-auto justify-between flex flex-col md:flex-row">
           <Image
             src="/images/location.jpg"
             alt="The Holy Spiritus"
             width={500}
             height={500}
-            className="w-1/2 md:w-1/3 mb-10 md:mb-0"
+            className="w-full md:w-1/3 mb-10 md:mb-0"
           />
           <div className="flex flex-col gap-4 w-full md:w-1/2 justify-center text-black">
             <h2 className="text-4xl font-montserrat font-bold uppercase">
@@ -93,9 +93,13 @@ export default function Home() {
             </p>
 
             <p>
-              Ben jij benieuwd waarom wij er juist voor gekozen hebben de
-              brouwerij in een kerk te vestigen? Lees dan het hele verhaal van
-              The Holy Spiritus.
+              Word jij enthousiast van brouwerijen en stokerijen en
+              ambachtelijke alcoholische dranken? Of ben je meer iemand die wild
+              wordt van streekgebonden natuurproducten, duurzame circulaire
+              creaties en outside the box bestemmingsplannen voor verlaten
+              kerken? Of ben jij juist die persoon die zich geregeld afvraagt
+              welke 43 producten je van 1 appel kunt maken en hoe de mensheid
+              uitgestorven tarwe en roggen rassen terug het landschap in krijgt?
             </p>
             <div className="flex">
               <Link href="/contact" className="button-primary">
@@ -106,7 +110,7 @@ export default function Home() {
         </div>
       </section>
       <section className="py-24">
-        <div className="container mx-auto">
+        <div className="container mx-10 md:mx-auto">
           <h2 className="text-4xl text-white font-montserrat font-bold uppercase">
             <span className="font-kaizer font-normal text-9xl">P</span>
             roducten
