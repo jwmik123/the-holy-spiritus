@@ -97,7 +97,7 @@ export default function ProductCategories() {
   const getCategoryUrl = (collection: Collection) => {
     // Special case for "Cider & Perry" - use the specific encoded format
     if (collection.name === "Cider & Perry") {
-      return "/shop?category=Cider+%26amp%3B+Perry";
+      return "/shop?category=Cider+%26+Perry&page=1";
     } else {
       // For all other categories, encode normally
       return `/shop?category=${encodeURIComponent(collection.name)}`;

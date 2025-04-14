@@ -15,6 +15,9 @@ export async function GET(request: Request) {
     const queryParams: any = {
       page,
       per_page,
+      orderby: "menu_order",
+      order: "asc",
+      stock_status: "instock", // Only show products that are in stock
     };
 
     // Add category filter if provided
