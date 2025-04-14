@@ -1,6 +1,6 @@
+// Modified app/api/send-email/route.ts
 import { NextResponse } from "next/server";
 
-// Define types for the email data
 interface SendEmailInput {
   clientMutationId: string;
   from: string;
@@ -15,7 +15,6 @@ interface SendEmailResponse {
   sent: boolean;
 }
 
-// Helper function to fetch from WordPress GraphQL API
 async function fetchAPI<T>(
   query: string,
   { variables }: { variables: { input: SendEmailInput } }
@@ -38,14 +37,14 @@ async function fetchAPI<T>(
   return json.data;
 }
 
-// Helper function (not exported at the module level)
 async function sendMail(
   subject: string,
   body: string,
   mutationId: string = "contact"
 ): Promise<SendEmailResponse | null> {
+  // Changed recipient email
   const fromAddress = "noreply@theholyspriritus.com";
-  const toAddress = "joel@mikdevelopment.nl";
+  const toAddress = "info@theholyspriritus.com"; // Changed to new recipient
 
   const data = await fetchAPI<{ sendEmail: SendEmailResponse }>(
     `
@@ -73,19 +72,37 @@ async function sendMail(
   return data?.sendEmail || null;
 }
 
-// Next.js App Router API route handler
 export async function POST(request: Request) {
   try {
-    const { subject, body, mutationId } = await request.json();
+    const { subject, name, email, phoneNumber, message, onderwerp, body } =
+      await request.json();
 
-    if (!subject || !body) {
+    // Format the email with the nicer template
+    const formattedSubject = `${
+      onderwerp || subject
+    } verzoek via theholyspiritus.com websiteformulier`;
+
+    const formattedBody = `
+Onderwerp: ${onderwerp || subject}
+Naam: ${name}
+Email: ${email}
+Telefoonnummer: ${phoneNumber}
+Bericht:
+${message || body}
+    `;
+
+    if (!formattedSubject || !formattedBody) {
       return NextResponse.json(
         { error: "Subject and body are required" },
         { status: 400 }
       );
     }
 
-    const result = await sendMail(subject, body, mutationId);
+    const result = await sendMail(
+      formattedSubject,
+      formattedBody,
+      "contact-form"
+    );
 
     if (!result || !result.sent) {
       return NextResponse.json(

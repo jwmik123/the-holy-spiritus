@@ -1,14 +1,7 @@
-// components/ContactForm.tsx
 "use client";
 
 import React, { useState } from "react";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
 
@@ -47,35 +40,28 @@ const ContactForm: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      // Format the email body with all form data
-      const emailBody = `
-        Naam: ${formData.name}
-        Email: ${formData.email}
-        Telefoonnummer: ${formData.phoneNumber}
-        Onderwerp: ${formData.subject}
-        
-        Bericht:
-        ${formData.message}
-      `;
-
-      const subject = `Contactverzoek: ${formData.subject}`;
-
+      // Send the data to our API endpoint
       const response = await fetch("/api/send-email", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          subject,
-          body: emailBody,
-          mutationId: "contact-form",
+          name: formData.name,
+          email: formData.email,
+          phoneNumber: formData.phoneNumber,
+          onderwerp: formData.subject,
+          message: formData.message,
+          subject: formData.subject, // Keeping for backward compatibility
         }),
       });
 
       const result = await response.json();
 
       if (result.success) {
-        toast.success("Uw bericht is succesvol verzonden!");
+        toast.success(
+          "Uw bericht is succesvol verzonden! Wij nemen zo spoedig mogelijk contact met u op."
+        );
         // Reset form after successful submission
         setFormData({
           name: "",
