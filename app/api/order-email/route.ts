@@ -75,9 +75,21 @@ async function sendOrderConfirmationEmail(
   return data?.sendEmail || null;
 }
 
-function formatCurrency(amount: string | number): string {
-  const numAmount = typeof amount === "string" ? parseFloat(amount) : amount;
-  return `€ ${numAmount.toFixed(2)}`;
+function formatCurrency(amount: string | number | undefined | null): string {
+  if (amount === undefined || amount === null || amount === "") {
+    return "€ 0.00";
+  }
+
+  try {
+    const numAmount = typeof amount === "string" ? parseFloat(amount) : amount;
+    if (isNaN(numAmount)) {
+      return "€ 0.00";
+    }
+    return `€ ${numAmount.toFixed(2)}`;
+  } catch (error) {
+    console.error("Error formatting currency:", error, "for amount:", amount);
+    return "€ 0.00";
+  }
 }
 
 function formatOrderDate(dateString: string): string {
@@ -133,6 +145,12 @@ export async function POST(request: Request) {
       `;
     });
 
+    // Make sure we have values for total calculations
+    const totalExTax = order.total_ex_tax || order.subtotal || 0;
+    const shippingTotal = order.shipping_total || 0;
+    const discountTotal = order.discount_total || 0;
+    const orderTotal = order.total || 0;
+
     const formattedBody = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
         <div style="text-align: center; padding: 20px;">
@@ -172,22 +190,22 @@ export async function POST(request: Request) {
               <tr>
                 <th colspan="3" style="padding: 10px; text-align: right; border-top: 1px solid #eee;">Subtotaal:</th>
                 <td style="padding: 10px; text-align: right; border-top: 1px solid #eee;">${formatCurrency(
-                  order.total_ex_tax
+                  totalExTax
                 )}</td>
               </tr>
               <tr>
                 <th colspan="3" style="padding: 10px; text-align: right;">Verzendkosten:</th>
                 <td style="padding: 10px; text-align: right;">${formatCurrency(
-                  order.shipping_total
+                  shippingTotal
                 )}</td>
               </tr>
               ${
-                order.discount_total > 0
+                discountTotal > 0
                   ? `
               <tr>
                 <th colspan="3" style="padding: 10px; text-align: right;">Korting:</th>
                 <td style="padding: 10px; text-align: right;">- ${formatCurrency(
-                  order.discount_total
+                  discountTotal
                 )}</td>
               </tr>
               `
@@ -196,7 +214,7 @@ export async function POST(request: Request) {
               <tr>
                 <th colspan="3" style="padding: 10px; text-align: right; font-size: 1.2em;">Totaal:</th>
                 <td style="padding: 10px; text-align: right; font-size: 1.2em; font-weight: bold;">${formatCurrency(
-                  order.total
+                  orderTotal
                 )}</td>
               </tr>
             </tfoot>
