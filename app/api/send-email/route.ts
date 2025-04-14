@@ -83,12 +83,13 @@ export async function POST(request: Request) {
     } verzoek via theholyspiritus.com websiteformulier`;
 
     const formattedBody = `
-Onderwerp: ${onderwerp || subject}
-Naam: ${name}
-Email: ${email}
-Telefoonnummer: ${phoneNumber}
-Bericht:
-${message || body}
+      <p><strong>Onderwerp:</strong> ${onderwerp || subject}</p>
+      <p><strong>Naam:</strong> ${name}</p>
+      <p><strong>Email:</strong> ${email}</p>
+      <p><strong>Telefoonnummer:</strong> ${phoneNumber}</p>
+      <br>
+      <p><strong>Bericht:</strong></p>
+      <p>${(message || body).replace(/\n/g, "<br>")}</p>
     `;
 
     if (!formattedSubject || !formattedBody) {
