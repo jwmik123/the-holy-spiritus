@@ -729,7 +729,7 @@ export default function CheckoutPage() {
                     >
                       <div className="w-12 h-12 bg-gray-100 rounded-md flex items-center justify-center mr-3">
                         <Image
-                          src="/images/ideal-logo.png"
+                          src="/images/ideal.png"
                           alt="iDEAL"
                           width={32}
                           height={32}
@@ -753,7 +753,7 @@ export default function CheckoutPage() {
                     >
                       <div className="w-12 h-12 bg-gray-100 rounded-md flex items-center justify-center mr-3">
                         <Image
-                          src="/images/bancontact-logo.png"
+                          src="/images/bancontact.png"
                           alt="Bancontact"
                           width={32}
                           height={32}

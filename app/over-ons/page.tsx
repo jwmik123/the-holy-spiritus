@@ -12,17 +12,168 @@ import SectionDivider from "../components/SectionDivider";
 
 // Partner logo slider component defined properly
 const PartnerLogoSlider = () => {
-  // We'll create a list of partner logos (using placeholder images for now)
-  // In a real implementation, you would replace these with actual partner logos
+  // List of partners with their information
   const partners = [
-    { id: 1, name: "Partner 1", logo: "/images/partner1.png" },
-    { id: 2, name: "Partner 2", logo: "/images/partner2.png" },
-    { id: 3, name: "Partner 3", logo: "/images/partner3.png" },
-    { id: 4, name: "Partner 4", logo: "/images/partner4.png" },
-    { id: 5, name: "Partner 5", logo: "/images/partner5.png" },
-    { id: 6, name: "Partner 6", logo: "/images/partner6.png" },
-    { id: 7, name: "Partner 7", logo: "/images/partner7.png" },
-    { id: 8, name: "Partner 8", logo: "/images/partner8.png" },
+    {
+      id: 1,
+      name: "Landwinkel",
+      logo: "/images/partner1.png",
+      description:
+        "Voor onze appels, peren en zoete kersen kloppen we aan bij de lokale Zeeuwse boomgaard van Landwinkel.",
+      url: "https://landwinkeloudestoof.nl/",
+    },
+    {
+      id: 2,
+      name: "De Reyngaard",
+      logo: "/images/partner2.png",
+      description:
+        "Unieke biologische teler die zijn planten op succesvolle wijze lessen in zelfredzaamheid bijbrengt.",
+      url: "",
+    },
+    {
+      id: 3,
+      name: "Zeker Zeeuws",
+      logo: "/images/partner3.png",
+      description:
+        "Zeker Zeeuws Streekproduct is een onafhankelijk erkend streekkeurmerk dat garandeert dat een product echt Zeeuws is.",
+      url: "https://www.keurmerkzekerzeeuws.nl/bedrijven/the-holy-spiritus-bv/",
+    },
+    {
+      id: 4,
+      name: "Smaak van Waas",
+      logo: "/images/partner4.png",
+      description:
+        "De Smaak van het Waasland op je bord. Boergondisch genieten met producten, gemaakt, gekweekt of geteeld door sympathieke Waaslanders van achter je hoek.",
+      url: "https://www.smaakvanwaas.be/",
+    },
+    {
+      id: 5,
+      name: "Café Het Verdronken Land",
+      logo: "/images/partner5.png",
+      description:
+        "Authentieke plek met meer dan 100 jaar geschiedenis waar je kunt genieten van de drankjes van The Holy Spiritus.",
+      url: "https://verdronkenland.nl/",
+    },
+    {
+      id: 6,
+      name: "Zeeuwse Zaken",
+      logo: "/images/partner6.png",
+      description:
+        "Dé groothandel in Zeeuwse Vlaggen, Zeeuwse souvenirs en cadeau's, Zeeuwse streekproducten, en relatiegeschenken.",
+      url: "https://www.zld.nl/?s=The+Holy+Spiritus&post_type=product&type_aws=true",
+    },
+    {
+      id: 7,
+      name: "Boeren en Buren",
+      logo: "/images/partner7.png",
+      description:
+        "Korte Keten samenwerking waar we elke woensdag onze deuren openstaan bij de Buurderij Sint Jansteen.",
+      url: "https://boerenenburen.nl/nl-NL/producers/39870",
+    },
+    {
+      id: 8,
+      name: "Lekkerder bij de boer",
+      logo: "/images/partner8.png",
+      description:
+        "The Holy Spiritus werkt graag samen met de plaatselijke landbouwers en ondersteunen de korte keten.",
+      url: "https://lekkerder.nl/sap-en-drank",
+    },
+    {
+      id: 9,
+      name: "Wood Architects",
+      logo: "/images/partner9.png",
+      description:
+        "Constructie- en afbouwarchitecten met een voorliefde voor hout, gefocust op een minimale ecologische voetafdruk.",
+      url: "https://ache-ligno.be/",
+    },
+    {
+      id: 10,
+      name: "Dockwise",
+      logo: "/images/partner10.png",
+      description:
+        "Helpt ondernemers met een programma op maat, innovatieve challenges en spraakmakende events.",
+      url: "https://www.dockwize.nl/over/over-dockwize",
+    },
+    {
+      id: 11,
+      name: "ILVO",
+      logo: "/images/partner11.png",
+      description:
+        "Instituut voor Landbouw- Visserij- en Voedingsonderzoek voor multidisciplinair, onafhankelijk onderzoek.",
+      url: "https://www.ilvo.vlaanderen.be/",
+    },
+    {
+      id: 12,
+      name: "OC West",
+      logo: "/images/partner12.png",
+      description:
+        "OC West stimuleert ondernemerschap en biedt ruimte en ondersteuning aan de Vlaamse ondernemers.",
+      url: "https://www.ocwest.be/nl",
+    },
+    {
+      id: 13,
+      name: "Hoogenschool Zeeland",
+      logo: "/images/partner13.png",
+      description:
+        "Praktijkgericht kennisinstituut voor onderzoek, onderwijs en innovatie, dat warme banden onderhoud met onze zilte regio.",
+      url: "https://hz.nl/",
+    },
+    {
+      id: 14,
+      name: "E-Commitment",
+      logo: "/images/partner14.png",
+      description:
+        "Samen met ecommit creëren we bewustzijn en actie voor een duurzamere toekomst. The Holy Spiritus is trots dat we CO2 Neutraal zijn.",
+      url: "https://ecommit.nl/klanten/the-holy-spiritus-bv",
+    },
+    {
+      id: 15,
+      name: "Impuls Zeeland",
+      logo: "/images/partner15.png",
+      description:
+        "Helpt ondernemers met innoveren, investeren en internationaliseren als onafhankelijke partij met een breed netwerk.",
+      url: "https://www.impulszeeland.nl/",
+    },
+    {
+      id: 16,
+      name: "Gemeente Hulst",
+      logo: "/images/partner16.png",
+      description:
+        "Sinds 1961 beheerder van onze mooie regio met oog op mens, dier en milieu, in alle rangen en standen, voor nu en in de toekomst.",
+      url: "https://www.gemeentehulst.nl/",
+    },
+    {
+      id: 17,
+      name: "Provincie Zeeland",
+      logo: "/images/partner17.png",
+      description:
+        "Met een mondiale visie is de provincie gericht op economische ontwikkeling, groei en innovatie van Zeeland.",
+      url: "https://www.zeeland.nl/over-ons",
+    },
+    {
+      id: 18,
+      name: "Grenspark Groot Saeftinghe",
+      logo: "/images/partner18.png",
+      description:
+        "Op de grens van België en Nederland, waar verschillende culturen, landschappen en smaken samenkomen.",
+      url: "https://www.grensparkgrootsaeftinghe.eu/over-het-grenspark/ons-verhaal/",
+    },
+    {
+      id: 19,
+      name: "Monumenten.nl",
+      logo: "/images/partner19.png",
+      description:
+        "Gids in het Nederlandse monumentenlandschap en beschermheer van onze authentieke nationale cultuurhistorische waarde.",
+      url: "https://www.monumenten.nl/soorten-monumenten/rijksmonument",
+    },
+    {
+      id: 20,
+      name: "Music & Media Webdesign en Reclame",
+      logo: "/images/partner20.png",
+      description:
+        "Ontwikkelt websites & webshops, verzorgt zoekmachine optimalisatie, ontwerpt logo's, huisstijlen en print reclame.",
+      url: "https://musicenmedia.nl/",
+    },
   ];
 
   return (
@@ -30,43 +181,73 @@ const PartnerLogoSlider = () => {
       <Swiper
         modules={[Autoplay]}
         spaceBetween={30}
-        slidesPerView={2}
+        slidesPerView={1}
         loop={true}
         autoplay={{
-          delay: 2000,
+          delay: 3000,
           disableOnInteraction: false,
         }}
         speed={1000}
         breakpoints={{
           640: {
-            slidesPerView: 3,
+            slidesPerView: 2,
           },
           768: {
-            slidesPerView: 4,
+            slidesPerView: 2,
           },
           1024: {
-            slidesPerView: 5,
+            slidesPerView: 3,
           },
         }}
         className="partners-slider"
       >
         {partners.map((partner) => (
           <SwiperSlide key={partner.id}>
-            <div className="h-32 bg-white rounded-lg flex items-center justify-center p-6 shadow-lg transform transition-transform duration-300 hover:scale-105">
+            <div className="block h-48 bg-white rounded-lg flex flex-col p-6 shadow-lg">
               {/* If you have partner logos, use this Image component */}
               {/* <Image 
                 src={partner.logo} 
                 alt={partner.name} 
                 width={120} 
                 height={80} 
-                className="object-contain"
+                className="object-contain mb-4"
               /> */}
 
-              {/* Placeholder for partner logos */}
-              <div className="bg-gray-100 w-full h-full rounded flex items-center justify-center">
-                <span className="text-gray-500 font-medium">
-                  {partner.name}
-                </span>
+              {/* Partner content */}
+              <div className="flex flex-col h-full justify-between">
+                <div>
+                  <h4 className="text-black font-bold text-lg mb-2">
+                    {partner.name}
+                  </h4>
+                  <p className="text-black text-sm leading-snug">
+                    {partner.description}
+                  </p>
+                </div>
+
+                {partner.url && (
+                  <a
+                    href={partner.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary font-medium text-sm mt-3 inline-flex items-center hover:underline"
+                  >
+                    Ga naar partner
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4 ml-1"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M14 5l7 7m0 0l-7 7m7-7H3"
+                      />
+                    </svg>
+                  </a>
+                )}
               </div>
             </div>
           </SwiperSlide>

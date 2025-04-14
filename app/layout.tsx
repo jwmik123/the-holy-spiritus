@@ -40,11 +40,13 @@ export default function RootLayout({
           <ReactQueryProvider>
             <CartProvider>
               <TransitionScreen />
-              <Navigation />
-              <div className="min-h-screen flex justify-center items-center">
-                <div className="w-full">{children}</div>
+              <div className="overflow-x-hidden">
+                <Navigation />
+                <div className="min-h-screen flex justify-center items-center">
+                  <div className="w-full">{children}</div>
+                </div>
+                <Footer />
               </div>
-              <Footer />
             </CartProvider>
           </ReactQueryProvider>
         </body>

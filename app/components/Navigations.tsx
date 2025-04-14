@@ -49,8 +49,8 @@ export default function Navigation() {
 
   return (
     <nav
-      className={`p-4 md:p-8 pr-14 md:pr-0 fixed w-full z-50 text-white font-montserrat ${
-        isHomePage ? "bg-transparent" : "bg-primary"
+      className={`p-4 md:p-8 fixed w-full z-50 text-white font-montserrat ${
+        isHomePage && !mobileMenuOpen ? "bg-transparent" : "bg-primary"
       }`}
     >
       <div className="container mx-auto flex justify-between items-center">
@@ -66,12 +66,12 @@ export default function Navigation() {
                 {item.title}
               </CustomLink>
               {item.children && item.children.length > 0 && (
-                <div className="absolute top-full left-0 hidden group-hover:block bg-white shadow-lg py-2 min-w-[200px] z-10">
+                <div className="absolute top-full left-0 hidden group-hover:block bg-primary shadow-lg py-2 min-w-[200px] z-10">
                   {item.children.map((child) => (
                     <CustomLink
                       key={child.id}
                       href={child.url}
-                      className="block px-4 py-2 text-gray-600 hover:bg-gray-100"
+                      className="block px-4 py-2 text-white hover:bg-white hover:text-primary"
                     >
                       {child.title}
                     </CustomLink>
@@ -100,8 +100,8 @@ export default function Navigation() {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-primary absolute top-full left-0 w-full shadow-lg py-4">
-          <div className="container mx-auto px-4 flex flex-col space-y-3">
+        <div className="md:hidden bg-primary absolute top-full h-screen left-0 w-full shadow-lg py-4">
+          <div className="container mx-auto px-4 flex flex-col">
             {menuItems.map((item) => (
               <div key={item.id} className="py-2">
                 <CustomLink href={item.url} className="lowercase text-lg">

@@ -1,5 +1,6 @@
 "use client";
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface TimelineItem {
   year: string;
@@ -9,25 +10,47 @@ interface TimelineItem {
 
 const CustomTimeline: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(true);
 
-  // Handle horizontal scrolling with mouse wheel
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    const handleWheel = (e: WheelEvent) => {
-      if (e.deltaY !== 0) {
-        e.preventDefault();
-        container.scrollLeft += e.deltaY;
-      }
+    const handleScroll = () => {
+      if (!container) return;
+
+      // Show left arrow if scrolled right
+      setShowLeftArrow(container.scrollLeft > 0);
+
+      // Show right arrow if not scrolled all the way to the right
+      setShowRightArrow(
+        container.scrollLeft <
+          container.scrollWidth - container.clientWidth - 10
+      );
     };
 
-    container.addEventListener("wheel", handleWheel, { passive: false });
+    container.addEventListener("scroll", handleScroll);
+
+    // Initial check
+    handleScroll();
 
     return () => {
-      container.removeEventListener("wheel", handleWheel);
+      container.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  const scrollLeft = () => {
+    if (containerRef.current) {
+      containerRef.current.scrollBy({ left: -300, behavior: "smooth" });
+    }
+  };
+
+  const scrollRight = () => {
+    if (containerRef.current) {
+      containerRef.current.scrollBy({ left: 300, behavior: "smooth" });
+    }
+  };
 
   const timelineItems: TimelineItem[] = [
     {
@@ -77,14 +100,47 @@ const CustomTimeline: React.FC = () => {
       description:
         "Twee gepassioneerde fruitwijn-fanaten veranderen de kerk in een ambachtelijke brouwerij en stokerij met neogotische interieurstukken en kleurrijke glas-in-loodramen.",
     },
+    {
+      year: "2023",
+      title: "Overname Sliertemie",
+      description:
+        "Een bedrijfje dat regionaal bekend stond om haar Kouterse vliegdrank, 4-jarigetijden kruidenwijn en Sangria rood & wit. The Holy Spiritus produceert dit inmiddels naar haar bekende recepten en Marléne heeft elke batch onderworpen aan haar kwaliteitscontrole.",
+    },
+    {
+      year: "2025",
+      title: "Overname Stokerij Eenvoud",
+      description:
+        "Deze staat bekend om hun lokale Jenever (O'de Flander), Gin en likeuren. Beiden ondersteunen nog steeds het proces, zodat de smaken gegarandeerd kunnen blijven.",
+    },
   ];
 
   return (
-    <div className="w-full overflow-hidden mb-16">
+    <div className="w-full overflow-hidden mb-16 relative">
+      {/* Scroll arrows */}
+      {showLeftArrow && (
+        <button
+          onClick={scrollLeft}
+          className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-white/80 hover:bg-white p-2 rounded-full shadow-md"
+          aria-label="Scroll left"
+        >
+          <ChevronLeft className="h-6 w-6 text-primary" />
+        </button>
+      )}
+
+      {showRightArrow && (
+        <button
+          onClick={scrollRight}
+          className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-white/80 hover:bg-white p-2 rounded-full shadow-md"
+          aria-label="Scroll right"
+        >
+          <ChevronRight className="h-6 w-6 text-primary" />
+        </button>
+      )}
+
       {/* Timeline container with horizontal scrolling */}
       <div
         ref={containerRef}
-        className="timeline-container relative w-full overflow-x-auto hide-scrollbar pb-10"
+        className="timeline-container relative w-full overflow-x-auto hide-scrollbar"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         <div className="relative min-w-max px-6 md:px-12">
@@ -124,7 +180,7 @@ const CustomTimeline: React.FC = () => {
 
       {/* Scroll hint for mobile */}
       <div className="text-center text-sm text-gray-500 mt-2 md:hidden">
-        Scroll horizontaal om meer te zien →
+        Gebruik de pijlen om door de tijdlijn te navigeren
       </div>
 
       {/* Custom CSS to hide scrollbar but keep functionality */}

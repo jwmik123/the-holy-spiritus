@@ -8,6 +8,7 @@ import ProductCategories from "./components/ProductCategories";
 import CustomLink from "./components/CustomLink";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import ContactForm from "./components/ContactForm";
 
 export default function Home() {
   const titleRef = useRef(null);
@@ -34,7 +35,7 @@ export default function Home() {
   return (
     <main className="bg-primary">
       <section
-        className="flex flex-col gap-4 h-[90vh] md:h-screen  justify-center"
+        className="flex flex-col gap-4 h-[70vh] md:h-screen justify-center"
         style={{
           backgroundImage:
             "linear-gradient(to bottom, transparent, #12161A), url(/images/startpagina.jpeg)",
@@ -46,7 +47,7 @@ export default function Home() {
         <div className="container mx-10 md:mx-auto flex flex-col gap-14">
           <h1
             ref={titleRef}
-            className="font-montserrat uppercase text-white text-[12vw] md:text-[7vw] leading-[10vw] md:leading-[8vw] font-bold overflow-hidden"
+            className="font-montserrat uppercase text-white text-[10vw] md:text-[7vw] leading-[10vw] md:leading-[8vw] font-bold overflow-hidden"
           >
             <div className="title-word">verlichtend</div>
             <div className="title-word">Duurzaam</div>
@@ -61,7 +62,7 @@ export default function Home() {
               Webshop
             </CustomLink>
             <CustomLink
-              href="/contact"
+              href="/evenementen"
               className="button-primary w-2/3 text-center md:text-left md:w-auto hover:bg-primary/50  transition-all duration-300"
             >
               Boek een proeverij of workshop
@@ -119,9 +120,9 @@ export default function Home() {
               uitgestorven tarwe en roggen rassen terug het landschap in krijgt?
             </p>
             <div className="flex">
-              <Link href="/contact" className="button-primary">
+              <a href="#contact" className="button-primary">
                 Boek een proeverij
-              </Link>
+              </a>
             </div>
           </div>
         </div>
@@ -139,6 +140,9 @@ export default function Home() {
           </p>
         </div>
         <ProductCategories />
+      </section>
+      <section id="contact" className="container mx-auto flex items-center">
+        <ContactForm />
       </section>
     </main>
   );

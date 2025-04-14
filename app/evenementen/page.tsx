@@ -39,7 +39,7 @@ export default function EventsPage() {
             </div>
             <div className="relative h-[400px] md:h-full order-1 md:order-2">
               <Image
-                src="/images/evenementen-tom-genbrugge-goderic-van-den-brande-the-holy-spiritus.jpg"
+                src="/images/storeopen.jpg"
                 alt="Evenementen en proeverijen"
                 fill
                 className="object-cover rounded-lg shadow-md"

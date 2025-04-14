@@ -44,7 +44,7 @@ async function sendMail(
 ): Promise<SendEmailResponse | null> {
   // Changed recipient email
   const fromAddress = "noreply@theholyspriritus.com";
-  const toAddress = "joel@mikdevelopment.nl"; // Changed to new recipient
+  const toAddress = "info@theholyspiritus.com"; // Changed to new recipient
 
   const data = await fetchAPI<{ sendEmail: SendEmailResponse }>(
     `

@@ -84,9 +84,9 @@ const EventBanner = () => {
 
           {/* Image */}
           <div ref={imageWrapperRef} className="w-full md:w-1/2 relative">
-            <div className="relative h-[300px] md:h-[500px] rounded-lg overflow-hidden shadow-xl transform md:rotate-1 border-4 border-white">
+            <div className="relative h-[300px] md:h-[500px] rounded-lg overflow-hidden shadow-xl transform  border-4 border-black">
               <Image
-                src="/images/evenementen-tom-genbrugge-goderic-van-den-brande-the-holy-spiritus.jpg"
+                src="/images/theholyspiritus2.jpg"
                 alt="Proeverijen in de kerk"
                 fill
                 className="object-cover object-center"

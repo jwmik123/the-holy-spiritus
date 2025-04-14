@@ -2,13 +2,15 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import CustomLink from "./CustomLink";
 
 interface CategoryProps {
   image: string;
   title: string;
+  link: string;
 }
 
-function CategoryItem({ image, title }: CategoryProps) {
+function CategoryItem({ image, title, link }: CategoryProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const bgRef = useRef<HTMLDivElement>(null);
 
@@ -47,23 +49,25 @@ function CategoryItem({ image, title }: CategoryProps) {
 
   return (
     <div ref={containerRef} className="relative aspect-square overflow-hidden">
-      <div
-        ref={bgRef}
-        className="absolute top-0 left-0 w-full bg-center bg-cover"
-        style={{ backgroundImage: `url(/images/${image}.jpg)` }}
-      ></div>
-      <h3 className="absolute top-4 left-4 text-white text-2xl font-bold z-10">
-        {title}
-      </h3>
+      <CustomLink href={link}>
+        <div
+          ref={bgRef}
+          className="absolute top-0 left-0 w-full bg-center bg-cover"
+          style={{ backgroundImage: `url(/images/${image}.jpg)` }}
+        ></div>
+        <h3 className="absolute top-4 left-4 text-white text-2xl font-bold z-10">
+          {title}
+        </h3>
+      </CustomLink>
     </div>
   );
 }
 
 export default function Categories() {
   const categories = [
-    { image: "webshop", title: "Webshop" },
-    { image: "brouwerij", title: "Brouwerij" },
-    { image: "evenementen", title: "Evenementen" },
+    { image: "webshop", title: "Webshop", link: "/shop" },
+    { image: "brouwerij", title: "Brouwerij", link: "/brouwerij" },
+    { image: "evenementen", title: "Evenementen", link: "/evenementen" },
   ];
 
   return (
@@ -74,6 +78,7 @@ export default function Categories() {
             key={index}
             image={category.image}
             title={category.title}
+            link={category.link}
           />
         ))}
       </div>
