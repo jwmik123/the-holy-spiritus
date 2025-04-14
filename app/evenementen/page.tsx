@@ -71,21 +71,6 @@ export default function EventsPage() {
               … Ervaar de geheimen van het brouwen en distilleren in een gebouw
               met karakter dat vraagt om jou te kunnen ontmoeten.
             </p>
-
-            <div className="bg-white p-6 rounded-lg border border-gray-200 my-8">
-              <h3 className="text-xl font-bold mb-4 text-center text-red-600">
-                BLIJF ALLERT tijdens COVID-19 (Coronamaatregelen 2021)
-              </h3>
-              <ul className="space-y-2 list-disc pl-6">
-                <li>Volg de instructies van de organisatie en standhouders</li>
-                <li>Hou 1.5 meter afstand</li>
-                <li>Reinig regelmatig je handen</li>
-                <li>Raak niet zomaar alles aan</li>
-                <li>Geen toegang indien je ziek bent</li>
-                <li>Het maximum aantal personen wordt gerespecteerd</li>
-                <li>Realiseer geen wachtrijen</li>
-              </ul>
-            </div>
           </div>
         </section>
 
@@ -261,16 +246,6 @@ export default function EventsPage() {
                 </li>
               </ul>
             </div>
-          </div>
-
-          <div className="relative h-[300px] md:h-[400px] mb-8">
-            <Image
-              src="/images/contact-doperkerk-sint-jansteen-the-holy-spiritus.jpg"
-              alt="Doperkerk Sint Jansteen"
-              fill
-              className="object-cover rounded-lg shadow-md"
-              sizes="(max-width: 768px) 100vw, 100vw"
-            />
           </div>
 
           <div className="bg-primary/10 p-8 rounded-lg mb-12">
