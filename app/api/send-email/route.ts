@@ -45,7 +45,7 @@ async function sendMail(
   mutationId: string = "contact"
 ): Promise<SendEmailResponse | null> {
   const fromAddress = "noreply@theholyspriritus.com";
-  const toAddress = "someone@theholyspriritus.com";
+  const toAddress = "joel@mikdevelopment.nl";
 
   const data = await fetchAPI<{ sendEmail: SendEmailResponse }>(
     `

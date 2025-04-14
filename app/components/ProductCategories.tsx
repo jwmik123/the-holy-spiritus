@@ -55,6 +55,9 @@ export default function ProductCategories() {
                 "Geen categorie",
                 "Ewan Ewyn",
                 "Sliertemie",
+                "Geschenkideeën",
+                "Private label",
+                "Proeverij",
                 "THS Merchandise",
                 "Vaderdag",
               ].includes(collection.name)

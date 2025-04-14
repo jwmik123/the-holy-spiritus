@@ -6,34 +6,51 @@ import Categories from "./components/Categories";
 import Image from "next/image";
 import ProductCategories from "./components/ProductCategories";
 import CustomLink from "./components/CustomLink";
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
 
 export default function Home() {
+  const titleRef = useRef(null);
+
+  useEffect(() => {
+    const titleWords = gsap.utils.toArray(".title-word");
+
+    gsap.fromTo(
+      titleWords,
+      {
+        y: 100,
+        opacity: 0,
+      },
+      {
+        y: 0,
+        opacity: 1,
+        duration: 1,
+        stagger: 0.2,
+        ease: "power3.out",
+      }
+    );
+  }, []);
+
   return (
     <main className="bg-primary">
       <section
         className="flex flex-col gap-4 h-[90vh] md:h-screen  justify-center"
         style={{
           backgroundImage:
-            "linear-gradient(to bottom, transparent, #12161A), url(/images/theholyspiritus2.jpg)",
+            "linear-gradient(to bottom, transparent, #12161A), url(/images/startpagina.jpeg)",
           backgroundSize: "cover",
           // backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
         }}
       >
         <div className="container mx-10 md:mx-auto flex flex-col gap-14">
-          <h1 className="font-montserrat uppercase text-white  text-[12vw] md:text-[7vw] leading-[10vw] md:leading-[8vw] font-bold ">
-            {/* <span className="font-kaizer font-normal text-[14vw] md:text-[12vw] uppercase">
-              V
-            </span> */}
-            verlichtend <br />
-            {/* <span className="font-kaizer font-normal text-[14vw] md:text-[12vw] uppercase">
-              D
-            </span> */}
-            Duurzaam <br />
-            {/* <span className="font-kaizer font-normal text-[14vw] md:text-[12vw] uppercase">
-              G
-            </span> */}
-            Gek
+          <h1
+            ref={titleRef}
+            className="font-montserrat uppercase text-white text-[12vw] md:text-[7vw] leading-[10vw] md:leading-[8vw] font-bold overflow-hidden"
+          >
+            <div className="title-word">verlichtend</div>
+            <div className="title-word">Duurzaam</div>
+            <div className="title-word">Gek</div>
           </h1>
 
           <div className="flex flex-col md:flex-row gap-4">

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FC } from "react";
+import { Facebook, Instagram, Linkedin, Twitter } from "lucide-react";
 
 const Footer: FC = () => {
   return (
@@ -69,13 +70,13 @@ const Footer: FC = () => {
               href="mailto:info@theholysplithoa.com"
               className="text-white hover:text-gray-300 text-sm"
             >
-              info@theholysplithoa.com
+              info@theholyspiritus.nl
             </a>
             <a
               href="mailto:sales@theholysplithoa.com"
               className="text-white hover:text-gray-300 text-sm"
             >
-              sales@theholysplithoa.com
+              sales@theholyspiritus.nl
             </a>
           </div>
 
@@ -90,34 +91,37 @@ const Footer: FC = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Facebook"
+                className="hover:opacity-75 transition-opacity"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="white"
-                >
-                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
-                </svg>
+                <Facebook size={20} color="white" />
               </a>
               <a
                 href="https://instagram.com/theholysplithoa"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
+                className="hover:opacity-75 transition-opacity"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="white"
-                >
-                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                </svg>
+                <Instagram size={20} color="white" />
+              </a>
+
+              <a
+                href="https://linkedin.com/company/theholysplithoa"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn"
+                className="hover:opacity-75 transition-opacity"
+              >
+                <Linkedin size={20} color="white" />
+              </a>
+              <a
+                href="https://x.com/theholysplithoa"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="X (Twitter)"
+                className="hover:opacity-75 transition-opacity"
+              >
+                <Twitter size={20} color="white" />
               </a>
             </div>
           </div>
@@ -126,7 +130,7 @@ const Footer: FC = () => {
 
       {/* Copyright Section */}
       <div className="container mx-auto px-4 mt-8 text-center text-xs text-gray-500">
-        © 2025 The Holy Splithoa
+        © 2025 The Holy Spiritus
       </div>
     </footer>
   );
