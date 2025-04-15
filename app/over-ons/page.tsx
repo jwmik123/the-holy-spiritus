@@ -302,7 +302,7 @@ export default function OverOnsPage() {
                 met dit bijzondere pand wisten we het meteen. THIS IS THE ONE!
               </p>
               <Link
-                href="/contact"
+                href="/evenementen"
                 className="bg-primary text-white px-6 py-3 mt-4 inline-block rounded-md hover:bg-opacity-90 transition shadow-md"
               >
                 Boek een rondleiding en een proeverij
