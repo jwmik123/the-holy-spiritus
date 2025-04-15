@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import CustomLink from "./CustomLink";
 import CartToggle from "./CartToggle";
 import { Menu, X } from "lucide-react";
+import Image from "next/image";
 
 interface MenuItem {
   id: number;
@@ -49,13 +50,26 @@ export default function Navigation() {
 
   return (
     <nav
-      className={`p-4 md:p-8 fixed w-full z-50 text-white font-montserrat ${
+      className={`${
+        isHomePage ? "p-4 md:p-8" : "p-4"
+      } fixed w-full z-50 text-white font-montserrat ${
         isHomePage && !mobileMenuOpen ? "bg-transparent" : "bg-primary"
       }`}
     >
       <div className="container mx-auto flex justify-between items-center">
         <div className="text-lg md:text-2xl font-bold uppercase">
           <CustomLink href="/">The Holy Spiritus</CustomLink>
+        </div>
+
+        {/* Logo */}
+        <div className="hidden md:block">
+          <Image
+            src="/images/ths-logo.png"
+            alt="The Holy Spiritus Logo"
+            width={60}
+            height={60}
+            className="object-contain"
+          />
         </div>
 
         {/* Desktop Menu */}
@@ -80,6 +94,9 @@ export default function Navigation() {
               )}
             </div>
           ))}
+          <CustomLink href={"/blog"} className="text-lg">
+            Blog
+          </CustomLink>
 
           {/* Cart Toggle */}
           <CartToggle />
