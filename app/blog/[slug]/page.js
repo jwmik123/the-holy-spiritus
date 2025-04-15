@@ -1,19 +1,10 @@
-import { Metadata } from "next";
+import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import {
   getWordpressPostBySlug,
   getAllWordpressPostSlugs,
 } from "@/app/lib/wordpress";
-
-// Skip type checking for the entire file
-// @ts-nocheck
-
-interface PageProps {
-  params: { slug: string };
-  searchParams?: { [key: string]: string | string[] | undefined };
-}
 
 // Generate static params for all blog posts
 export async function generateStaticParams() {
@@ -22,11 +13,7 @@ export async function generateStaticParams() {
 }
 
 // Generate metadata for each blog post
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string };
-}): Promise<Metadata> {
+export async function generateMetadata({ params }) {
   const post = await getWordpressPostBySlug(params.slug);
 
   if (!post) {
@@ -49,7 +36,7 @@ export async function generateMetadata({
 export const revalidate = 3600; // Revalidate this page every hour
 
 // Main page component
-async function Page({ params, searchParams }: PageProps) {
+export default async function Page({ params }) {
   try {
     const post = await getWordpressPostBySlug(params.slug);
 
@@ -143,5 +130,3 @@ async function Page({ params, searchParams }: PageProps) {
     return notFound();
   }
 }
-
-export default Page;

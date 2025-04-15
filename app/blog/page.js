@@ -1,22 +1,17 @@
-import { Metadata } from "next";
 import { getWordpressPosts, getWordpressArchive } from "../lib/wordpress";
 import { BlogCard } from "../components/BlogCard";
 import { Pagination } from "../components/Pagination";
 import { ArchiveWidget } from "../components/ArchiveWidget";
 import Link from "next/link";
 
-export const metadata: Metadata = {
+export const metadata = {
   title: "Blog | The Holy Spiritus",
   description: "Lees de nieuwste blogberichten van The Holy Spiritus",
 };
 
 export const revalidate = 3600; // Revalidate this page every hour
 
-export default async function BlogPage({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
+export default async function BlogPage({ searchParams }) {
   // Get the current page from query parameters, defaulting to 1
   const pageParam = searchParams.page;
   const currentPage =
