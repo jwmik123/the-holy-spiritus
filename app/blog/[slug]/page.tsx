@@ -44,8 +44,10 @@ export const revalidate = 3600; // Revalidate this page every hour
 
 export default async function BlogPostPage({
   params,
+  searchParams,
 }: {
   params: { slug: string };
+  searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const post = await getWordpressPostBySlug(params.slug);
 
