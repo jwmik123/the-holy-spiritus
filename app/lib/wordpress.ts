@@ -135,10 +135,10 @@ function processWordPressContent(content: string): string {
   return processedContent.trim();
 }
 
-// GraphQL query to get posts with pagination
+// GraphQL query to get posts with pagination and date filtering
 const GET_POSTS_QUERY = gql`
-  query GetPosts($first: Int!, $after: String) {
-    posts(first: $first, after: $after) {
+  query GetPosts($first: Int!, $after: String, $dateQuery: DateQueryInput) {
+    posts(first: $first, after: $after, where: { dateQuery: $dateQuery }) {
       pageInfo {
         hasNextPage
         endCursor
@@ -211,6 +211,17 @@ const GET_ALL_POST_SLUGS_QUERY = gql`
   }
 `;
 
+// GraphQL query to get post dates for archive widget
+const GET_POST_DATES_QUERY = gql`
+  query GetPostDates($first: Int!) {
+    posts(first: $first) {
+      nodes {
+        date
+      }
+    }
+  }
+`;
+
 // Helper function to get image URL by size name
 function getImageUrlBySize(
   sizes: MediaSize[] | undefined,
@@ -275,7 +286,9 @@ function transformPost(post: PostNode): WordpressPost {
 
 export async function getWordpressPosts(
   page = 1,
-  perPage = 9
+  perPage = 9,
+  year?: string,
+  month?: string
 ): Promise<{ posts: WordpressPost[]; pagination: PaginationData }> {
   try {
     // For pagination with GraphQL, we need to calculate "after" based on page
@@ -287,28 +300,37 @@ export async function getWordpressPosts(
         {
           first: perPage * (page - 1),
           after: null,
+          dateQuery: createDateQuery(year, month),
         }
       );
       after = previousPageData.posts.pageInfo.endCursor;
     }
 
+    // Create date query if year or month is provided
+    const dateQuery = createDateQuery(year, month);
+
     // Now fetch the actual page we want
     const data = await graphQLClient.request<PostsResponse>(GET_POSTS_QUERY, {
       first: perPage,
       after,
+      dateQuery,
     });
 
-    // Count total posts by making a separate query for efficiency
+    // Count total posts with the same filters for pagination
     const countQuery = gql`
-      query GetPostCount {
-        posts {
+      query GetPostCount($dateQuery: DateQueryInput) {
+        posts(first: 500, where: { dateQuery: $dateQuery }) {
           nodes {
             id
           }
         }
       }
     `;
-    const countData = await graphQLClient.request<PostsResponse>(countQuery);
+
+    const countData = await graphQLClient.request<PostsResponse>(countQuery, {
+      dateQuery,
+    });
+
     const totalPosts = countData.posts.nodes.length;
     const totalPages = Math.ceil(totalPosts / perPage);
 
@@ -330,6 +352,43 @@ export async function getWordpressPosts(
       pagination: { totalPages: 0, currentPage: 1, totalPosts: 0 },
     };
   }
+}
+
+// Helper function to create dateQuery object for GraphQL
+function createDateQuery(year?: string, month?: string): any {
+  if (!year && !month) return undefined;
+
+  const dateQuery: any = {};
+
+  if (year) {
+    dateQuery.year = parseInt(year, 10);
+  }
+
+  if (month) {
+    // Convert Dutch month name to month number (1-12)
+    const monthNames = [
+      "januari",
+      "februari",
+      "maart",
+      "april",
+      "mei",
+      "juni",
+      "juli",
+      "augustus",
+      "september",
+      "oktober",
+      "november",
+      "december",
+    ];
+    const monthIndex = monthNames.findIndex(
+      (m) => m.toLowerCase() === month.toLowerCase()
+    );
+    if (monthIndex !== -1) {
+      dateQuery.month = monthIndex + 1;
+    }
+  }
+
+  return Object.keys(dateQuery).length ? dateQuery : undefined;
 }
 
 export async function getWordpressPostBySlug(
@@ -359,7 +418,7 @@ export async function getAllWordpressPostSlugs(): Promise<string[]> {
     const data = await graphQLClient.request<PostSlugsResponse>(
       GET_ALL_POST_SLUGS_QUERY,
       {
-        first: 100, // Adjust as needed
+        first: 500, // Increased to get all posts
       }
     );
 
@@ -367,5 +426,73 @@ export async function getAllWordpressPostSlugs(): Promise<string[]> {
   } catch (error) {
     console.error("Error fetching WordPress post slugs:", error);
     return [];
+  }
+}
+
+// Function to get archive data (years and months with posts)
+export async function getWordpressArchive(): Promise<{
+  [year: string]: string[];
+}> {
+  try {
+    // Fetch all post dates (up to 500, to ensure we get everything)
+    const data = await graphQLClient.request<{
+      posts: { nodes: { date: string }[] };
+    }>(GET_POST_DATES_QUERY, {
+      first: 500,
+    });
+
+    // Create a map of years to months
+    const archiveMap: { [year: string]: Set<string> } = {};
+
+    // Add future years if desired (2025)
+    archiveMap["2025"] = new Set();
+
+    data.posts.nodes.forEach((node) => {
+      // Date format from WordPress is ISO: YYYY-MM-DDTHH:MM:SS
+      const date = new Date(node.date);
+      const year = date.getFullYear().toString();
+      // Month names in Dutch (Januari, Februari, etc.)
+      const month = date.toLocaleString("nl-NL", { month: "long" });
+
+      if (!archiveMap[year]) {
+        archiveMap[year] = new Set();
+      }
+
+      archiveMap[year].add(month);
+    });
+
+    // Convert sets to arrays
+    const result: { [year: string]: string[] } = {};
+    Object.keys(archiveMap).forEach((year) => {
+      result[year] = Array.from(archiveMap[year]).sort((a, b) => {
+        // Sort months chronologically
+        const monthOrder = [
+          "januari",
+          "februari",
+          "maart",
+          "april",
+          "mei",
+          "juni",
+          "juli",
+          "augustus",
+          "september",
+          "oktober",
+          "november",
+          "december",
+        ];
+        return (
+          monthOrder.indexOf(a.toLowerCase()) -
+          monthOrder.indexOf(b.toLowerCase())
+        );
+      });
+    });
+
+    // Sort years in descending order (newest first)
+    return Object.fromEntries(
+      Object.entries(result).sort((a, b) => parseInt(b[0]) - parseInt(a[0]))
+    );
+  } catch (error) {
+    console.error("Error fetching WordPress archive data:", error);
+    return {};
   }
 }

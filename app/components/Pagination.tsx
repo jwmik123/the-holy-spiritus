@@ -1,18 +1,49 @@
+"use client";
+
 import Link from "next/link";
 import { PaginationData } from "../lib/wordpress";
+import { useSearchParams } from "next/navigation";
 
 interface PaginationProps {
   pagination: PaginationData;
   basePath: string;
+  searchParams?: { [key: string]: string | string[] | undefined };
 }
 
-export function Pagination({ pagination, basePath }: PaginationProps) {
+export function Pagination({
+  pagination,
+  basePath,
+  searchParams = {},
+}: PaginationProps) {
   const { totalPages, currentPage } = pagination;
 
   // Don't render pagination if there's only one page
   if (totalPages <= 1) {
     return null;
   }
+
+  // Helper function to build URLs with all query parameters
+  const buildPageUrl = (page: number) => {
+    // Start with current search params but exclude the page
+    const params = new URLSearchParams();
+
+    // Add all current search params except 'page'
+    Object.entries(searchParams).forEach(([key, value]) => {
+      if (key !== "page" && value !== undefined) {
+        if (typeof value === "string") {
+          params.set(key, value);
+        } else if (Array.isArray(value)) {
+          value.forEach((v) => params.append(key, v));
+        }
+      }
+    });
+
+    // Add the new page
+    params.set("page", page.toString());
+
+    // Construct URL
+    return `${basePath}?${params.toString()}`;
+  };
 
   // Create an array of page numbers to show
   const getPageNumbers = () => {
@@ -56,12 +87,12 @@ export function Pagination({ pagination, basePath }: PaginationProps) {
   const pageNumbers = getPageNumbers();
 
   return (
-    <nav className="flex justify-center mt-10" aria-label="Pagination">
+    <nav className="flex justify-center mt-10" aria-label="Paginering">
       <ul className="flex items-center gap-1">
         {/* Previous Page Button */}
         <li>
           <Link
-            href={currentPage > 1 ? `${basePath}?page=${currentPage - 1}` : "#"}
+            href={currentPage > 1 ? buildPageUrl(currentPage - 1) : "#"}
             className={`px-3 py-2 rounded-md flex items-center ${
               currentPage > 1
                 ? "text-gray-700 hover:bg-gray-100"
@@ -69,7 +100,7 @@ export function Pagination({ pagination, basePath }: PaginationProps) {
             }`}
             aria-disabled={currentPage <= 1}
           >
-            <span className="sr-only">Previous Page</span>
+            <span className="sr-only">Vorige pagina</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5"
@@ -99,7 +130,7 @@ export function Pagination({ pagination, basePath }: PaginationProps) {
           return (
             <li key={pageNumber}>
               <Link
-                href={`${basePath}?page=${pageNumber}`}
+                href={buildPageUrl(pageNumber)}
                 className={`px-4 py-2 rounded-md ${
                   currentPage === pageNumber
                     ? "bg-amber-600 text-white font-medium"
@@ -117,9 +148,7 @@ export function Pagination({ pagination, basePath }: PaginationProps) {
         <li>
           <Link
             href={
-              currentPage < totalPages
-                ? `${basePath}?page=${currentPage + 1}`
-                : "#"
+              currentPage < totalPages ? buildPageUrl(currentPage + 1) : "#"
             }
             className={`px-3 py-2 rounded-md flex items-center ${
               currentPage < totalPages
@@ -128,7 +157,7 @@ export function Pagination({ pagination, basePath }: PaginationProps) {
             }`}
             aria-disabled={currentPage >= totalPages}
           >
-            <span className="sr-only">Next Page</span>
+            <span className="sr-only">Volgende pagina</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5"

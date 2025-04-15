@@ -95,7 +95,7 @@ export default function Navigation() {
             </div>
           ))}
           <CustomLink href={"/blog"} className="text-lg">
-            Blog
+            blog
           </CustomLink>
 
           {/* Cart Toggle */}

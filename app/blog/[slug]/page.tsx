@@ -55,7 +55,7 @@ export default async function BlogPostPage({
 
   // Format date
   const publishDate = new Date(post.date);
-  const formattedDate = publishDate.toLocaleDateString("en-US", {
+  const formattedDate = publishDate.toLocaleDateString("nl-NL", {
     year: "numeric",
     month: "long",
     day: "numeric",

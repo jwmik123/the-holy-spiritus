@@ -12,9 +12,9 @@ export function BlogCard({ post }: { post: WordpressPost }) {
 
   const altText = featuredImage?.alt_text || post.title.rendered;
 
-  // Format date
+  // Format date in Dutch
   const publishDate = new Date(post.date);
-  const formattedDate = publishDate.toLocaleDateString("en-US", {
+  const formattedDate = publishDate.toLocaleDateString("nl-NL", {
     year: "numeric",
     month: "long",
     day: "numeric",
