@@ -286,74 +286,90 @@ export default function EventsPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
             {/* Proeverij Package 1 */}
-            <div className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
-              <div className="bg-primary text-white p-4">
-                <h3 className="text-xl font-bold text-center">Bee My Sweety</h3>
-                <p className="text-center text-white/90">€15,00-/persoon</p>
+            <Link href="/product/proeverij-bee-my-sweety" className="block">
+              <div className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                <div className="bg-primary text-white p-4">
+                  <h3 className="text-xl font-bold text-center">
+                    Bee My Sweety
+                  </h3>
+                  <p className="text-center text-white/90">€15,00-/persoon</p>
+                </div>
+                <div className="p-6">
+                  <p className="mb-4">
+                    Een begeleide rondleiding doorheen de Brouwerij &
+                    Distilleerderij met een Proeverij van onder andere Zeeuwse
+                    Cider Brut en 6 variaties van onze heerlijke zoete Mede
+                    (Honingwijnen/Mead), plus 2 koffielikeuren vergezeld van een
+                    knabbel en een flesje water om ervoor te zorgen dat de drank
+                    niet te sterk naar het hoofd stijgt. Dit alles in een
+                    sfeervolle en geestrijke omgeving.
+                  </p>
+                  <p className="text-sm font-medium text-gray-600 mt-4">
+                    (minimum 10 personen per proeverij)
+                  </p>
+                </div>
               </div>
-              <div className="p-6">
-                <p className="mb-4">
-                  Een begeleide rondleiding doorheen de Brouwerij &
-                  Distilleerderij met een Proeverij van onder andere Zeeuwse
-                  Cider Brut en 6 variaties van onze heerlijke zoete Mede
-                  (Honingwijnen/Mead), plus 2 koffielikeuren vergezeld van een
-                  knabbel en een flesje water om ervoor te zorgen dat de drank
-                  niet te sterk naar het hoofd stijgt. Dit alles in een
-                  sfeervolle en geestrijke omgeving.
-                </p>
-                <p className="text-sm font-medium text-gray-600 mt-4">
-                  (minimum 10 personen per proeverij)
-                </p>
-              </div>
-            </div>
+            </Link>
 
             {/* Proeverij Package 2 */}
-            <div className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
-              <div className="bg-primary text-white p-4">
-                <h3 className="text-xl font-bold text-center">Love 2 Switch</h3>
-                <p className="text-center text-white/90">€20,00-/persoon</p>
+            <Link
+              href="/product/proeverij-love-2-switch-e25-00-1-persoon"
+              className="block"
+            >
+              <div className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                <div className="bg-primary text-white p-4">
+                  <h3 className="text-xl font-bold text-center">
+                    Love 2 Switch
+                  </h3>
+                  <p className="text-center text-white/90">€20,00-/persoon</p>
+                </div>
+                <div className="p-6">
+                  <p className="mb-4">
+                    Een begeleide rondleiding doorheen de Brouwerij &
+                    Distilleerderij met een Proeverij van onder andere Zeeuwse
+                    Cider Brut, 2 verschillende Vodka's en 3 verschillende Gin's
+                    (elk met hun eigen Twist) vergezeld van een knabbel en een
+                    flesje water om ervoor te zorgen dat de drank niet te sterk
+                    naar het hoofd stijgt. Dit alles in een sfeervolle en
+                    geestrijke omgeving.
+                  </p>
+                  <p className="text-sm font-medium text-gray-600 mt-4">
+                    (minimum 10 personen per proeverij)
+                  </p>
+                </div>
               </div>
-              <div className="p-6">
-                <p className="mb-4">
-                  Een begeleide rondleiding doorheen de Brouwerij &
-                  Distilleerderij met een Proeverij van onder andere Zeeuwse
-                  Cider Brut, 2 verschillende Vodka's en 3 verschillende Gin's
-                  (elk met hun eigen Twist) vergezeld van een knabbel en een
-                  flesje water om ervoor te zorgen dat de drank niet te sterk
-                  naar het hoofd stijgt. Dit alles in een sfeervolle en
-                  geestrijke omgeving.
-                </p>
-                <p className="text-sm font-medium text-gray-600 mt-4">
-                  (minimum 10 personen per proeverij)
-                </p>
-              </div>
-            </div>
+            </Link>
 
             {/* Proeverij Package 3 */}
-            <div className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
-              <div className="bg-primary text-white p-4">
-                <h3 className="text-xl font-bold text-center">
-                  You're the Strongest
-                </h3>
-                <p className="text-center text-white/90">€25,00-/persoon</p>
+            <Link
+              href="/product/proeverij-youre-the-strongest"
+              className="block"
+            >
+              <div className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                <div className="bg-primary text-white p-4">
+                  <h3 className="text-xl font-bold text-center">
+                    You're the Strongest
+                  </h3>
+                  <p className="text-center text-white/90">€25,00-/persoon</p>
+                </div>
+                <div className="p-6">
+                  <p className="mb-4">
+                    Een begeleide rondleiding doorheen de Brouwerij &
+                    Distilleerderij met een Proeverij van onder andere Zeeuwse
+                    Cider Brut en zeven variaties in Distillaten waaronder Honey
+                    Love & Zeeuwse Calva die elks op hunzelf hebben mogen rijpen
+                    op vat in deze prachtige omgeving waar wij onze drank delen
+                    met de engelen (AngleShare). Daarbij een aangepaste knabbel
+                    en een flesje water om ervoor te zorgen dat de drank niet te
+                    sterk naar het hoofd stijgt. Dit alles in een sfeervolle en
+                    geestrijke omgeving.
+                  </p>
+                  <p className="text-sm font-medium text-gray-600 mt-4">
+                    (minimum 10 personen per proeverij)
+                  </p>
+                </div>
               </div>
-              <div className="p-6">
-                <p className="mb-4">
-                  Een begeleide rondleiding doorheen de Brouwerij &
-                  Distilleerderij met een Proeverij van onder andere Zeeuwse
-                  Cider Brut en zeven variaties in Distillaten waaronder Honey
-                  Love & Zeeuwse Calva die elks op hunzelf hebben mogen rijpen
-                  op vat in deze prachtige omgeving waar wij onze drank delen
-                  met de engelen (AngleShare). Daarbij een aangepaste knabbel en
-                  een flesje water om ervoor te zorgen dat de drank niet te
-                  sterk naar het hoofd stijgt. Dit alles in een sfeervolle en
-                  geestrijke omgeving.
-                </p>
-                <p className="text-sm font-medium text-gray-600 mt-4">
-                  (minimum 10 personen per proeverij)
-                </p>
-              </div>
-            </div>
+            </Link>
           </div>
 
           <div className="text-center mb-8">

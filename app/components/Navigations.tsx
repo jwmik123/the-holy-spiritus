@@ -140,6 +140,11 @@ export default function Navigation() {
                 )}
               </div>
             ))}
+            <div className="py-2">
+              <CustomLink href="/blog" className="lowercase text-lg">
+                blog
+              </CustomLink>
+            </div>
           </div>
         </div>
       )}

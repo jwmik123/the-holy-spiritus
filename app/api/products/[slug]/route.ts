@@ -17,6 +17,7 @@ export async function GET(request: NextRequest, { params }: any) {
     // First, we need to find the product by slug
     const productsResponse = await wooCommerce.get("products", {
       slug: slug,
+      stock_status: "instock",
     });
 
     if (!productsResponse.data || productsResponse.data.length === 0) {

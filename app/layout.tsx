@@ -9,6 +9,7 @@ import Footer from "./components/Footer";
 import ReactQueryProvider from "./providers/ReactQueryProvider";
 import TransitionScreen from "./components/PageTransition";
 import { ViewTransitions } from "next-view-transitions";
+import AgeRestrictionModal from "./components/AgeRestrictionModal";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -39,6 +40,7 @@ export default function RootLayout({
         >
           <ReactQueryProvider>
             <CartProvider>
+              <AgeRestrictionModal />
               <TransitionScreen />
               <div className="overflow-x-hidden">
                 <Navigation />

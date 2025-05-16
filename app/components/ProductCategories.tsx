@@ -53,11 +53,12 @@ export default function ProductCategories() {
                 "Crowdfunding",
                 "Merchandise",
                 "Geen categorie",
-                "Ewan Ewyn",
+                "Ewan & Ewyn",
                 "Sliertemie",
                 "Geschenkideeën",
                 "Private label",
-                "Proeverij",
+                "Stokerij Eenvoud",
+                "Proeverij en Workshop",
                 "THS Merchandise",
                 "Vaderdag",
               ].includes(collection.name)
@@ -173,7 +174,7 @@ export default function ProductCategories() {
                   </div>
                 )}
                 <div className="absolute inset-0 bg-black bg-opacity-40 flex items-end p-6">
-                  <h3 className="text-white text-2xl font-montserrat font-bold">
+                  <h3 className="text-white text-2xl font-montserrat font-bold capitalize">
                     {collection.name}
                   </h3>
                 </div>

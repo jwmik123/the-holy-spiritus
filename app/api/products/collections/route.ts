@@ -8,6 +8,9 @@ export async function GET() {
       per_page: 15,
     });
 
+    // Log the response data to help diagnose image issues
+    console.log("Categories response:", JSON.stringify(response.data, null, 2));
+
     return NextResponse.json(response.data);
   } catch (error) {
     console.error("WooCommerce API Error:", error);

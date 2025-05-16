@@ -30,17 +30,18 @@ const MAIN_CATEGORIES: MainCategory[] = [
     subCategories: [
       { name: "Cider & Perry", id: "cider-perry" },
       { name: "Likeuren", id: "likeuren" },
-      { name: "Jenever", id: "jenever" },
+      { name: "jenever", id: "jenever" },
       { name: "Gin", id: "gin" },
       { name: "Vodka", id: "vodka" },
       { name: "Distillaat", id: "distillaat" },
-      { name: "Merchandise", id: "merchandise" },
-      { name: "Private label", id: "private-label" },
+
+      { name: "Stokerij Eenvoud", id: "stokerij-eenvoud" },
     ],
   },
-  { name: "Ewan Ewyn", id: "ewan-ewyn" },
+  { name: "Ewan & Ewyn", id: "ewan-ewyn" },
   { name: "Sliertemie", id: "sliertemie" },
-  { name: "Proeverij", id: "proeverij" },
+  { name: "Proeverij en Workshop", id: "proeverij" },
+  { name: "Merchandise", id: "merchandise" },
   { name: "Geschenkideeën", id: "geschenkideeen" },
 ];
 
@@ -463,7 +464,7 @@ function ProductsContent() {
                                 onClick={() => {
                                   handleCategoryChange(subCategory.name);
                                 }}
-                                className={`w-full px-4 py-2 text-left rounded-md text-sm ${
+                                className={`w-full px-4 py-2 text-left rounded-md text-sm capitalize ${
                                   activeCategory === subCategory.name
                                     ? "bg-gray-200 font-medium"
                                     : "hover:bg-gray-100"
@@ -524,6 +525,56 @@ function ProductsContent() {
                   .filter(
                     (product: Product) => product.stock_status === "instock"
                   )
+                  .sort((a: Product, b: Product) => {
+                    // First, check if either product has "Proeverij" in title
+                    const aHasProeverij = a.name.includes("Proeverij");
+                    const bHasProeverij = b.name.includes("Proeverij");
+
+                    // If one has Proeverij and the other doesn't, Proeverij should be last
+                    if (aHasProeverij && !bHasProeverij) return 1;
+                    if (!aHasProeverij && bHasProeverij) return -1;
+
+                    // Get all subcategory names from MAIN_CATEGORIES
+                    const subCategoryNames = MAIN_CATEGORIES.filter(
+                      (cat) => cat.subCategories
+                    ).flatMap(
+                      (cat) => cat.subCategories?.map((sub) => sub.name) || []
+                    );
+
+                    // Get all main category names (excluding those with subcategories)
+                    const mainCategoryNames = MAIN_CATEGORIES.filter(
+                      (cat) => !cat.subCategories
+                    ).map((cat) => cat.name);
+
+                    // Check if products contain any subcategory or main category names
+                    const aHasSubCategory = subCategoryNames.some((name) =>
+                      a.name.includes(name)
+                    );
+                    const bHasSubCategory = subCategoryNames.some((name) =>
+                      b.name.includes(name)
+                    );
+                    const aHasMainCategory = mainCategoryNames.some((name) =>
+                      a.name.includes(name)
+                    );
+                    const bHasMainCategory = mainCategoryNames.some((name) =>
+                      b.name.includes(name)
+                    );
+
+                    // If one has subcategory/main category and the other doesn't, it should be first
+                    if (
+                      (aHasSubCategory || aHasMainCategory) &&
+                      !(bHasSubCategory || bHasMainCategory)
+                    )
+                      return -1;
+                    if (
+                      !(aHasSubCategory || aHasMainCategory) &&
+                      (bHasSubCategory || bHasMainCategory)
+                    )
+                      return 1;
+
+                    // If both or neither have categories, maintain original order
+                    return 0;
+                  })
                   .map((product: Product, index: number) => (
                     <div
                       key={product.id || `empty-${index}`}
@@ -560,6 +611,31 @@ function ProductsContent() {
                         <div className="text-gray-700 mb-6">
                           €{Number(product.price).toFixed(2)}
                         </div>
+
+                        {/* Add to Cart or Out of Stock button */}
+                        {product.stock_status === "instock" ? (
+                          <button
+                            onClick={() => handleAddToCart(product.id)}
+                            className="w-full bg-primary text-white font-medium py-2 px-6 rounded hover:bg-opacity-90 transition duration-200"
+                          >
+                            Toevoegen aan winkelwagen
+                            {(() => {
+                              const cartItem = items.find(
+                                (item) => item?.productId === product.id
+                              );
+                              return cartItem && cartItem.quantity > 0
+                                ? ` (${cartItem.quantity})`
+                                : "";
+                            })()}
+                          </button>
+                        ) : (
+                          <button
+                            disabled
+                            className="w-full bg-gray-300 text-gray-600 font-medium py-2 px-6 rounded cursor-not-allowed"
+                          >
+                            Uitverkocht
+                          </button>
+                        )}
                       </>
                     </div>
                   ))

@@ -36,6 +36,7 @@ interface ProductData {
     key: string;
     value: string;
   }>;
+  stock_status: string;
 }
 
 export default function ProductDetailPage() {
@@ -156,7 +157,7 @@ export default function ProductDetailPage() {
 
       // Fetch products from the same category, excluding the current product
       const response = await fetch(
-        `/api/products?category=${categoryId}&per_page=4`
+        `/api/products?category=${categoryId}&per_page=4&stock_status=instock`
       );
 
       if (!response.ok) {
@@ -414,29 +415,40 @@ export default function ProductDetailPage() {
 
             {/* Add to cart section */}
             <div className="flex items-center space-x-4 pt-4">
-              <div className="w-24">
-                <input
-                  type="number"
-                  min="1"
-                  value={quantity}
-                  onChange={handleQuantityChange}
-                  className="w-full border border-gray-300 rounded px-3 py-2"
-                />
-              </div>
-              <button
-                onClick={handleAddToCart}
-                className="bg-primary text-white font-medium py-2 px-6 rounded hover:bg-opacity-90 transition duration-200"
-              >
-                Toevoegen aan winkelwagen
-                {(() => {
-                  const cartItem = items.find(
-                    (item) => item?.productId === product.id
-                  );
-                  return cartItem && cartItem.quantity > 0
-                    ? ` (${cartItem.quantity})`
-                    : "";
-                })()}
-              </button>
+              {product.stock_status === "instock" ? (
+                <>
+                  <div className="w-24">
+                    <input
+                      type="number"
+                      min="1"
+                      value={quantity}
+                      onChange={handleQuantityChange}
+                      className="w-full border border-gray-300 rounded px-3 py-2"
+                    />
+                  </div>
+                  <button
+                    onClick={handleAddToCart}
+                    className="bg-primary text-white font-medium py-2 px-6 rounded hover:bg-opacity-90 transition duration-200"
+                  >
+                    Toevoegen aan winkelwagen
+                    {(() => {
+                      const cartItem = items.find(
+                        (item) => item?.productId === product.id
+                      );
+                      return cartItem && cartItem.quantity > 0
+                        ? ` (${cartItem.quantity})`
+                        : "";
+                    })()}
+                  </button>
+                </>
+              ) : (
+                <button
+                  disabled
+                  className="bg-gray-300 text-gray-600 font-medium py-2 px-6 rounded cursor-not-allowed"
+                >
+                  Uitverkocht
+                </button>
+              )}
             </div>
           </div>
         </div>
