@@ -526,54 +526,40 @@ function ProductsContent() {
                     (product: Product) => product.stock_status === "instock"
                   )
                   .sort((a: Product, b: Product) => {
-                    // First, check if either product has "Proeverij" in title
-                    const aHasProeverij = a.name.includes("Proeverij");
-                    const bHasProeverij = b.name.includes("Proeverij");
+                    // Check if items are Proeverij
+                    const aIsProeverij = a.name.includes("Proeverij");
+                    const bIsProeverij = b.name.includes("Proeverij");
 
-                    // If one has Proeverij and the other doesn't, Proeverij should be last
-                    if (aHasProeverij && !bHasProeverij) return 1;
-                    if (!aHasProeverij && bHasProeverij) return -1;
+                    // Proeverij items always go last
+                    if (aIsProeverij && !bIsProeverij) return 1;
+                    if (!aIsProeverij && bIsProeverij) return -1;
 
-                    // Get all subcategory names from MAIN_CATEGORIES
-                    const subCategoryNames = MAIN_CATEGORIES.filter(
-                      (cat) => cat.subCategories
-                    ).flatMap(
-                      (cat) => cat.subCategories?.map((sub) => sub.name) || []
-                    );
+                    // Get all category names (both main and sub)
+                    const allCategoryNames = [
+                      ...MAIN_CATEGORIES.filter(
+                        (cat) => cat.subCategories
+                      ).flatMap(
+                        (cat) => cat.subCategories?.map((sub) => sub.name) || []
+                      ),
+                      ...MAIN_CATEGORIES.filter(
+                        (cat) => !cat.subCategories
+                      ).map((cat) => cat.name),
+                    ];
 
-                    // Get all main category names (excluding those with subcategories)
-                    const mainCategoryNames = MAIN_CATEGORIES.filter(
-                      (cat) => !cat.subCategories
-                    ).map((cat) => cat.name);
-
-                    // Check if products contain any subcategory or main category names
-                    const aHasSubCategory = subCategoryNames.some((name) =>
+                    // Check if products contain any category names
+                    const aHasCategory = allCategoryNames.some((name) =>
                       a.name.includes(name)
                     );
-                    const bHasSubCategory = subCategoryNames.some((name) =>
-                      b.name.includes(name)
-                    );
-                    const aHasMainCategory = mainCategoryNames.some((name) =>
-                      a.name.includes(name)
-                    );
-                    const bHasMainCategory = mainCategoryNames.some((name) =>
+                    const bHasCategory = allCategoryNames.some((name) =>
                       b.name.includes(name)
                     );
 
-                    // If one has subcategory/main category and the other doesn't, it should be first
-                    if (
-                      (aHasSubCategory || aHasMainCategory) &&
-                      !(bHasSubCategory || bHasMainCategory)
-                    )
-                      return -1;
-                    if (
-                      !(aHasSubCategory || aHasMainCategory) &&
-                      (bHasSubCategory || bHasMainCategory)
-                    )
-                      return 1;
+                    // If one has category and the other doesn't, category item goes first
+                    if (aHasCategory && !bHasCategory) return -1;
+                    if (!aHasCategory && bHasCategory) return 1;
 
-                    // If both or neither have categories, maintain original order
-                    return 0;
+                    // If both have categories or both don't, sort by price
+                    return Number(a.price) - Number(b.price);
                   })
                   .map((product: Product, index: number) => (
                     <div
