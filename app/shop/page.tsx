@@ -523,7 +523,10 @@ function ProductsContent() {
                 // Show actual products (filtering out any that might be out of stock)
                 products
                   .filter(
-                    (product: Product) => product.stock_status === "instock"
+                    (product: Product) =>
+                      product.stock_status === "instock" &&
+                      Number(product.price) > 0 &&
+                      !isNaN(Number(product.price))
                   )
                   .sort((a: Product, b: Product) => {
                     // Check if items are Proeverij
@@ -534,31 +537,25 @@ function ProductsContent() {
                     if (aIsProeverij && !bIsProeverij) return 1;
                     if (!aIsProeverij && bIsProeverij) return -1;
 
-                    // Get all category names (both main and sub)
-                    const allCategoryNames = [
-                      ...MAIN_CATEGORIES.filter(
-                        (cat) => cat.subCategories
-                      ).flatMap(
-                        (cat) => cat.subCategories?.map((sub) => sub.name) || []
-                      ),
-                      ...MAIN_CATEGORIES.filter(
-                        (cat) => !cat.subCategories
-                      ).map((cat) => cat.name),
-                    ];
+                    // Define priority categories and their order
+                    const priorityCategories = ["jenever", "Gin", "Likeuren"];
 
-                    // Check if products contain any category names
-                    const aHasCategory = allCategoryNames.some((name) =>
-                      a.name.includes(name)
-                    );
-                    const bHasCategory = allCategoryNames.some((name) =>
-                      b.name.includes(name)
-                    );
+                    // Get category priority (lower number = higher priority)
+                    const getCategoryPriority = (product: Product): number => {
+                      const category = product.categories?.find((cat) =>
+                        priorityCategories.includes(cat.name)
+                      );
+                      if (!category) return 999; // Non-priority categories go last
+                      return priorityCategories.indexOf(category.name);
+                    };
 
-                    // If one has category and the other doesn't, category item goes first
-                    if (aHasCategory && !bHasCategory) return -1;
-                    if (!aHasCategory && bHasCategory) return 1;
+                    const aPriority = getCategoryPriority(a);
+                    const bPriority = getCategoryPriority(b);
 
-                    // If both have categories or both don't, sort by price
+                    // Sort by category priority
+                    if (aPriority !== bPriority) return aPriority - bPriority;
+
+                    // If same category, sort by price
                     return Number(a.price) - Number(b.price);
                   })
                   .map((product: Product, index: number) => (
