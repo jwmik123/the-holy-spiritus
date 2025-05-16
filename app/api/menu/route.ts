@@ -86,7 +86,10 @@ async function fetchWordPressMenu() {
     if (node.parentId) {
       const parent = menuMap.get(node.parentId);
       if (parent) {
-        parent.children.push(menuMap.get(node.id));
+        // Skip adding children for "brouwerij" menu item
+        if (parent.title.toLowerCase() !== "brouwerij") {
+          parent.children.push(menuMap.get(node.id));
+        }
       }
     }
   });
