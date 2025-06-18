@@ -44,7 +44,7 @@ const Footer: FC = () => {
               Proeverij
             </Link>
             <Link
-              href="/evenementen"
+              href="/brouwerij"
               className="text-white hover:text-gray-300 text-sm"
             >
               Brouwerij
@@ -62,10 +62,15 @@ const Footer: FC = () => {
             <h3 className="text-sm text-white mb-2 uppercase font-bold">
               Contact
             </h3>
-            <p className="text-white text-sm pb-4">
+            <a
+              href="https://maps.google.com/?q=Hoofdstraat+4,+4564+AP+Sint+Jansteen"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white hover:text-gray-300 text-sm pb-4"
+            >
               Hoofdstraat 4 <br />
               4564 AP Sint Jansteen
-            </p>
+            </a>
             <a
               href="mailto:info@theholyspiritus.com"
               className="text-white hover:text-gray-300 text-sm"
@@ -178,7 +183,7 @@ const Footer: FC = () => {
 
       {/* Copyright Section */}
       <div className="container mx-auto px-4 mt-8 text-center text-xs text-gray-500">
-        © 2025 The Holy Spiritus
+        © {new Date().getFullYear()} The Holy Spiritus
       </div>
     </footer>
   );

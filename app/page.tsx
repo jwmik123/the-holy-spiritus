@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+
 import StoreOpen from "./components/StoreOpen";
 import FadeInText from "./components/FadeInText";
 import Categories from "./components/Categories";

@@ -34,7 +34,6 @@ export default function ProductCategories() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const swiperRef = useRef<SwiperRef>(null);
-  const router = useRouter();
 
   useEffect(() => {
     async function fetchCollections() {
@@ -69,7 +68,13 @@ export default function ProductCategories() {
               typeof collection.image === "object" && collection.image !== null
                 ? (collection.image as ImageObject).src
                 : collection.image,
-          }));
+          }))
+          .sort((a: Collection, b: Collection) => {
+            // Put "Stokerij Eenvoud" first
+            if (a.name === "Stokerij Eenvoud") return -1;
+            if (b.name === "Stokerij Eenvoud") return 1;
+            return 0;
+          });
 
         setCollections(filteredData);
       } catch (err) {

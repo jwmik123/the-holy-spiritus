@@ -36,7 +36,7 @@ export default function BrouwerijPage() {
             </div>
             <div className="relative h-[400px] md:h-full order-1 md:order-2">
               <Image
-                src="/images/tom.webp"
+                src="/images/appels.webp"
                 alt="Master brewer Tom"
                 fill
                 className="object-cover rounded-lg shadow-md"
