@@ -132,7 +132,7 @@ export default function BrouwerijPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             <div className="relative h-[400px]">
               <Image
-                src="/images/brouwerij-sintjansteen-the-holy-spiritus.jpg"
+                src="/images/even-brouwerij.webp"
                 alt="Brouwerij Sint Jansteen"
                 fill
                 className="object-cover rounded-lg shadow-md"

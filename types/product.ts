@@ -13,6 +13,7 @@ export interface ProductCategory {
   id: number;
   name: string;
   slug: string;
+  primary?: boolean; // Added to mark primary category
 }
 
 export interface Product {

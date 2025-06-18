@@ -249,6 +249,22 @@ function ProductsContent() {
     addToCart(productId);
   };
 
+  // Helper function to get the primary category or fallback to first category
+  const getPrimaryCategory = (product: Product): string => {
+    if (!product.categories || product.categories.length === 0) {
+      return "Vince";
+    }
+
+    // Look for the primary category first
+    const primaryCategory = product.categories.find((cat) => cat.primary);
+    if (primaryCategory) {
+      return primaryCategory.name;
+    }
+
+    // Fallback to first category if no primary is set
+    return product.categories[0].name;
+  };
+
   // Toggle expanded category
   const toggleCategory = (categoryId: string) => {
     if (expandedCategory === categoryId) {
@@ -566,7 +582,7 @@ function ProductsContent() {
                       <>
                         {/* Brand/Store name */}
                         <div className="text-sm text-gray-700 mb-1">
-                          {product.categories?.[0]?.name || "Vince"}
+                          {getPrimaryCategory(product)}
                         </div>
 
                         {/* Make the product name and image clickable */}

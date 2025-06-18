@@ -79,7 +79,7 @@ const BrouwerijBanner = () => {
           <div className="w-full md:w-1/2 relative h-[400px] md:h-[500px]">
             <div className="absolute inset-0 bg-black/20 rounded-lg overflow-hidden">
               <img
-                src="/images/brouwerij.webp"
+                src="/images/brouwerij-god.webp"
                 alt="The Holy Spiritus Brouwerij"
                 className="w-full h-full object-cover"
               />

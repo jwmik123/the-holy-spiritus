@@ -16,6 +16,7 @@ interface ProductCategory {
   id: number;
   name: string;
   slug: string;
+  primary?: boolean; // Added to mark primary category
 }
 
 interface ProductData {
@@ -87,7 +88,15 @@ export default function ProductDetailPage() {
       storage: "Koel & donker bewaren",
       servingAdvice: "",
       country: "Nederland",
-      type: product.categories?.[0]?.name || "Distillaat",
+      type: (() => {
+        // Look for primary category first
+        const primaryCategory = product.categories?.find((cat) => cat.primary);
+        if (primaryCategory) {
+          return primaryCategory.name;
+        }
+        // Fallback to first category
+        return product.categories?.[0]?.name || "Distillaat";
+      })(),
       specifications: [],
     };
 

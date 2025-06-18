@@ -30,6 +30,27 @@ export async function GET(request: NextRequest, { params }: any) {
     // Get the first product from the response (slug should be unique)
     const product = productsResponse.data[0];
 
+    // Process primary category from meta_data
+    let primaryCategoryId = null;
+
+    // Look for Yoast SEO primary category in meta_data
+    if (product.meta_data) {
+      const primaryCategoryMeta = product.meta_data.find(
+        (meta: any) => meta.key === "_yoast_wpseo_primary_product_cat"
+      );
+      if (primaryCategoryMeta) {
+        primaryCategoryId = parseInt(primaryCategoryMeta.value);
+      }
+    }
+
+    // Mark the primary category if found
+    if (primaryCategoryId && product.categories) {
+      product.categories = product.categories.map((category: any) => ({
+        ...category,
+        primary: category.id === primaryCategoryId,
+      }));
+    }
+
     return NextResponse.json(product);
   } catch (error) {
     console.error("Error fetching product:", error);

@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ["theholyspiritus.com"],
+    domains: ["theholyspiritus.com", "admin.theholyspiritus.com"],
   },
   env: {
     WORDPRESS_API_URL: process.env.WORDPRESS_API_URL,

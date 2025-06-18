@@ -32,11 +32,36 @@ export async function GET(request: Request) {
     const totalPages = parseInt(response.headers["x-wp-totalpages"] || "0");
 
     // Filter products that have both a category and a valid price
-    const validProducts = response.data.filter((product: any) => {
-      const price = Number(product.price);
-      const hasCategory = product.categories && product.categories.length > 0;
-      return !isNaN(price) && price > 0 && hasCategory;
-    });
+    const validProducts = response.data
+      .filter((product: any) => {
+        const price = Number(product.price);
+        const hasCategory = product.categories && product.categories.length > 0;
+        return !isNaN(price) && price > 0 && hasCategory;
+      })
+      .map((product: any) => {
+        // Process primary category from meta_data
+        let primaryCategoryId = null;
+
+        // Look for Yoast SEO primary category in meta_data
+        if (product.meta_data) {
+          const primaryCategoryMeta = product.meta_data.find(
+            (meta: any) => meta.key === "_yoast_wpseo_primary_product_cat"
+          );
+          if (primaryCategoryMeta) {
+            primaryCategoryId = parseInt(primaryCategoryMeta.value);
+          }
+        }
+
+        // Mark the primary category if found
+        if (primaryCategoryId && product.categories) {
+          product.categories = product.categories.map((category: any) => ({
+            ...category,
+            primary: category.id === primaryCategoryId,
+          }));
+        }
+
+        return product;
+      });
 
     // Take only the requested number of products
     const paginatedProducts = validProducts.slice(0, per_page);
